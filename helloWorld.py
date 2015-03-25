@@ -1,4 +1,4 @@
-from myhdl import Signal, delay, always, now, Simulation
+from myhdl import Signal, delay, always, now, Simulation, traceSignals
 
 
 def ClkDriver(clk):
@@ -35,12 +35,12 @@ def low(clk):
 
 	return sayLow
 
-def inc(count, enable, clock):
+def inc(count, enable, clk):
 	""" Incrementer with enable.
 
     count -- output
     enable -- control input, increment when 1
-    clock -- clock input
+    clk -- clock input
 
     """
 
@@ -58,17 +58,18 @@ def inc(count, enable, clock):
 
 	return incLogic
 
+def testbench():
+    clk = Signal(0)
+    count = Signal(0)
+    enable = 1  
+    inc_inst = inc(count, enable, clk)
+    clkdriver_inst = ClkDriver(clk)
+
+    return clkdriver_inst, inc_inst
+
 
 if __name__ == '__main__':
+    tb_fsm = traceSignals(testbench)
 	# This will run the simulation for 50 timesteps, so we can expect 25 rising edges
-	clk = Signal(0)
-	count = Signal(0)
-	enable = 1	
-	inc_inst = inc(count, enable, clk)
-	clkdriver_inst = ClkDriver(clk)
-	# hello_inst = HelloWorld(clk)
-	high_inst = high(clk)
-	low_inst = low(clk)
-	# tock_inst = tock(clk)
-	sim = Simulation(clkdriver_inst, inc_inst)
-	sim.run(50)
+    sim = Simulation(tb_fsm)
+    sim.run(50)
