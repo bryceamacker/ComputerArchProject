@@ -1,0 +1,40 @@
+andi $t1, $t1, 0x0000
+addi $v0, $t1, 0x0040
+addi $v1, $t1, 0x1010
+addi $v2, $t1, 0x000F
+addi $v3, $t1, 0x00F0
+addi $t0, $t1, 0x0000
+addi $a0, $t1, 0x0010
+addi $a1, $t1, 0x0005
+
+WHILE:
+  andi $t0, $t0, 0x0000
+  slti $t1, $a0, $t0
+  beq $t0, $t1, ENDLOOP
+
+  addi $a1, $a1, -1
+  sw $a1, 0($a0)
+  lw $t0, 0($a0)
+  slti $t1, $t0, 0x0100
+  andi $t0, $t0, 0x0000
+  beq $t1, $t0, ELSE
+  IF:
+    srl $v0, $v0, 3
+    or $v1, $v1, $v0
+    andi $t1, $t1, 0x0000
+    addi $t1, $t1, 0xFF00
+    sw $t1, 0($a0)
+    j END
+  ELSE:
+    sll $v1, $v1, 2
+    xor $v3, $v3, $v2
+    andi $t1, $t1, 0x0000
+    addi $t1, $t1, 0x00FF
+    sw $t1, 0($a0)
+    j END
+
+  END:
+  addi $a0, $a0, 2
+  j WHILE
+
+ENDLOOP:
