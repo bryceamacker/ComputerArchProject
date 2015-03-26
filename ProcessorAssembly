@@ -32,8 +32,9 @@ WHILE:
   # while ($a1 > 0)
   andi $t0, $t0, 0
   slt $t1, $a1, $t0
-  beq $t0, $t1, ENDLOOP
-
+  beq $t0, $t1, ENDLOOP1
+  ENDLOOP1:
+  j ENDLOOP
   # $a1 = $a1 - 1
   addi $a1, $a1, -1
 
