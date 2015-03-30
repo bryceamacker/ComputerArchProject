@@ -1,5 +1,16 @@
 from myhdl import *
+from memoryDictionaries import *
 
+# Read in file as a dictionary
+# 0 : 010011...
+# 2 : 010110...
+programMemory = {}
+i = 0
+with open("ProcessorMachineCode") as f:
+    for line in f:
+       programMemory[int(i)] = line.replace(" ", "")
+       i = i + 2
+clockCycles = len(programMemory)
 
 def ClkDriver(clk):
 
@@ -54,9 +65,37 @@ def inc(count, enable, clk):
             # python variable would only exist in this functions scope each
             # clock cycle, and then be reset. 
             next_op = (count[:12] + 1)
-            if next_op <= 15:
+            func = (count[4:] + 1)
+            if func <= 5:
+                count.next[4:] = func                
+            elif next_op <= 15:
                 count.next[:12] = next_op
 
+    return incLogic
+
+def programCounter(instruction, PC, clk):
+    """ Incrementer with enable.
+
+    count -- output
+    enable -- control input, increment when 1
+    clk -- clock input
+
+    """
+
+    # This basically means this function will run everytime there is a 
+    # rising clock edge from the clk signal   
+    @always(clk.posedge)
+    def incLogic():
+            # lines = fo.readline()
+            # no_line = lines.replace(" ", "")
+            # print("Lines: " + lines)
+            # print("No Lines: " + no_line)
+            try:
+                line = programMemory[int(PC)]
+                PC.next = PC + 2
+                instruction.next = int(line.replace(" ", ""), 2)
+            except KeyError:
+                print("")
     return incLogic
 
 def instructionMemory(instruction, clk):
@@ -66,17 +105,7 @@ def instructionMemory(instruction, clk):
     clk -- clock input
 
     """
-    r_type = 0
-    addi = 1
-    subi = 2
-    andi = 3
-    ori = 4
-    lw = 6
-    sw = 7
-    sll = 8
-    srl = 9
-    jump = 10
-    beq = 11
+
     # This basically means this function will run everytime there is a 
     # rising clock edge from the clk signal   
     @always(clk.posedge)
@@ -85,37 +114,32 @@ def instructionMemory(instruction, clk):
             opcode = instruction[:12]
             print("Opcode: %s" % (bin(opcode, 4)))
             if opcode == r_type:
-                print("r_type")
+                # print("Func: %s" % (bin(func, 3)))
 
-            if opcode == addi:
-                print("addi")
+                func = bin(instruction[3:0], 3)
+                rd = bin(instruction[6:3], 3)
+                rt = bin(instruction[9:6], 3)
+                rs = bin(instruction[12:9], 3)
+                print("%s %s %s %s" % (func_dict[func], registers_dict[rs], registers_dict[rt], registers_dict[rd]))
 
-            if opcode == subi:
-                print("subi")
+            elif opcode == jump:
+                address = bin(instruction[12:], 12)
+                print("%s %s" % (opcode_dict[bin(opcode, 4)], address))
 
-            if opcode == andi:
-                print("andi")
+            else:
+                imm = instruction[6:]
+                rt = instruction[9:6]
+                rs = instruction[12:9]
 
-            if opcode == ori:
-                print("ori")
+                imm = bin(instruction[6:], 6)
+                rt = bin(instruction[9:6], 3)
+                rs = bin(instruction[12:9], 3)
+                try:
+                    print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rs], registers_dict[rt], imm))
+                except KeyError:
+                    print("No instruction for opcode %s" % bin(opcode, 4))
 
-            if opcode == lw:
-                print("lw")
-
-            if opcode == sw:
-                print("sw")
-
-            if opcode == sll:
-                print("sll")
-
-            if opcode == srl:
-                print("srl")
-
-            if opcode == jump:
-                print("jump")
-
-            if opcode == beq:
-                print("beq")
+            print("")
 
     return instrctionLogic
 
@@ -123,15 +147,18 @@ def testbench():
     func_Array = []
     clk = Signal(bool(0))
     count = Signal(0)
+    PC = Signal(0)
     # Creates an instruction signal 4 bits wide, init to 0000b
-    instruction = Signal(intbv(0)[16:])
+    instruction = Signal(intbv(65535)[16:])
     enable = 1  
     # Instantiate all modules and store them in func_Array
-    inc_inst = inc(instruction, enable, clk)
+    # inc_inst = inc(instruction, enable, clk)
+    PC_inst = programCounter(instruction, PC, clk)
     instMem_inst = instructionMemory(instruction, clk)
     clkdriver_inst = ClkDriver(clk)
+    func_Array.append(PC_inst)
     func_Array.append(instMem_inst)
-    func_Array.append(inc_inst)
+    # func_Array.append(inc_inst)
     func_Array.append(clkdriver_inst)
 
     return func_Array
@@ -140,4 +167,4 @@ if __name__ == '__main__':
     tb_fsm = traceSignals(testbench)
 	# This will run the simulation for 50 timesteps, so we can expect 25 rising edges
     sim = Simulation(tb_fsm)
-    sim.run(50)
+    sim.run(2 * clockCycles + 1)
