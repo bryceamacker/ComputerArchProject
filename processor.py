@@ -1,6 +1,7 @@
 from myhdl import *
 from programCounter import *
 from instructionMemory import *
+import os
 
 # Read in file as a dictionary
 # 0 : 010011...
@@ -40,6 +41,7 @@ def testbench():
     return func_Array
 
 if __name__ == '__main__':
+    [ os.remove (f) for f in os.listdir(".") if f.endswith(".vcd") ]
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
     sim.run(2 * clockCycles + 1)
