@@ -1,10 +1,9 @@
 from myhdl import always
 
-def programCounter(instruction, pc, clk, programMemory):
+def programCounter(pc_write, clk, pc):
     """ Incrementer with enable.
-
-    count -- output
-    PC -- counter to increment address
+    pc_write -- input (enable pc += 2)
+    pc -- output instruction address
     clk -- clock input
 
     """
@@ -14,9 +13,8 @@ def programCounter(instruction, pc, clk, programMemory):
     @always(clk.posedge)
     def incLogic():
         try:
-            ins_line = programMemory[int(pc)]
-            pc.next = pc + 2
-            instruction.next = int(ins_line.replace(" ", ""), 2)
+            if pc_write:
+                pc.next = pc + 2
         except KeyError:
             print("")
 
