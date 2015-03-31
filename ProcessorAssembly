@@ -31,10 +31,10 @@ addi $a1, $t1, 0x5
 WHILE:
   # while ($a1 > 0)
   andi $t0, $t0, 0
-  slt $t1, $a1, $t0
-  beq $t0, $t1, ENDLOOP1
-  ENDLOOP1:
+  slt $t1, $t0, $a1             ## THIS HAS CHANGED (flipped a1 and t0)
+  beq $t0, $t1, CONTINUE_LOOP   ## THIS HAS CHANGED (ENDLOOP -> CONTINUE_LOOP)
   j ENDLOOP
+  CONTINUE_LOOP:                ## THIS HAS CHANGED (ENDLOOP -> CONTINUE_LOOP, and moved down two lines)
   # $a1 = $a1 - 1
   addi $a1, $a1, -1
 
@@ -49,8 +49,7 @@ WHILE:
   # if ($t0 > 0x0100)
   slt $t1, $t0, $t1
   andi $t0, $t0, 0
-  beq $t1, $t0, ELSE1
-  ELSE1:
+  beq $t1, $t0, IF              ## THIS HAS CHANGED (ELSE1 -> IF)
   j ELSE
   IF:
     # $v0 = $v0 / 8
@@ -70,8 +69,8 @@ WHILE:
     sw $t1, 0($a0)
     j END
   ELSE:
-    # $v1 = $v1 x 2
-    sll $v1, $v1, 2
+    # $v2 = $v2 x 2
+    sll $v2, $v2, 2             ## THIS HAS CHANGED (v1 -> v2)
 
     # $v3 = $v3 (x) $v2
     xor $v3, $v3, $v2
