@@ -1,3 +1,11 @@
 *.vcd
 testbench.vcd.1427310929.54
 testbench.vcd*
+*.name
+*.iml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+.idea/workspace.xml
