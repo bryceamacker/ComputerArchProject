@@ -1,5 +1,8 @@
+#!/usr/local/bin/python
+
 from myhdl import *
 from memoryDictionaries import *
+import os
 
 # Read in file as a dictionary
 # 0 : 010011...
@@ -164,7 +167,7 @@ def testbench():
     return func_Array
 
 if __name__ == '__main__':
-    [os.remove(file) for file in filelist]
+    [ os.remove (f) for f in os.listdir(".") if f.endswith(".vcd") ]
 
     tb_fsm = traceSignals(testbench)
 	# This will run the simulation for 50 timesteps, so we can expect 25 rising edges
