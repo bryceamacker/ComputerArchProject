@@ -1,3 +1,20 @@
+# Mac OS X files
+.DS_Store
+.Thumbs.db
+.Trashes
+._*
+.Spotlight-V100
+
+# Sublime project files
+*.sublime-project
+*.sublime-workspace
+
+# Atom stuff
+.atom-build.json
+
+# Binaries
+*.pyc
+
 *.vcd
 testbench.vcd.1427310929.54
 testbench.vcd*
