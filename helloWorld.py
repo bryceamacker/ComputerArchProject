@@ -55,19 +55,19 @@ def inc(count, enable, clk):
 
     """
 
-    # This basically means this function will run everytime there is a 
-    # rising clock edge from the clk signal   
+    # This basically means this function will run everytime there is a
+    # rising clock edge from the clk signal
     @always(clk.posedge)
     def incLogic():
         # The enable signal is currently tied high, so this will always count
         if enable:
-            # count is not a regular variable, it is a Signal. A regular 
+            # count is not a regular variable, it is a Signal. A regular
             # python variable would only exist in this functions scope each
-            # clock cycle, and then be reset. 
+            # clock cycle, and then be reset.
             next_op = (count[:12] + 1)
             func = (count[4:] + 1)
             if func <= 5:
-                count.next[4:] = func                
+                count.next[4:] = func
             elif next_op <= 15:
                 count.next[:12] = next_op
 
@@ -82,8 +82,8 @@ def programCounter(instruction, PC, clk):
 
     """
 
-    # This basically means this function will run everytime there is a 
-    # rising clock edge from the clk signal   
+    # This basically means this function will run everytime there is a
+    # rising clock edge from the clk signal
     @always(clk.posedge)
     def incLogic():
             # lines = fo.readline()
@@ -106,8 +106,8 @@ def instructionMemory(instruction, clk):
 
     """
 
-    # This basically means this function will run everytime there is a 
-    # rising clock edge from the clk signal   
+    # This basically means this function will run everytime there is a
+    # rising clock edge from the clk signal
     @always(clk.posedge)
     def instrctionLogic():
             print("Instruction: %s " % (bin(instruction, 16)))
@@ -150,7 +150,7 @@ def testbench():
     PC = Signal(0)
     # Creates an instruction signal 4 bits wide, init to 0000b
     instruction = Signal(intbv(65535)[16:])
-    enable = 1  
+    enable = 1
     # Instantiate all modules and store them in func_Array
     # inc_inst = inc(instruction, enable, clk)
     PC_inst = programCounter(instruction, PC, clk)
@@ -164,6 +164,8 @@ def testbench():
     return func_Array
 
 if __name__ == '__main__':
+    [os.remove(file) for file in filelist]
+
     tb_fsm = traceSignals(testbench)
 	# This will run the simulation for 50 timesteps, so we can expect 25 rising edges
     sim = Simulation(tb_fsm)
