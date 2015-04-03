@@ -2,10 +2,11 @@ from myhdl import *
 from memoryDictionaries import *
 
 
-def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory):
+def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
     """ Stores all instructions and outputs appropriate signals after decoding them
     pc -- input instruction memory address
     instruction -- output
+    opcode -- output
     clk -- clock input
     rd -- output (read reg2)
     rt -- output (read reg1)
@@ -45,7 +46,7 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory):
             except KeyError:
                 print("No instruction for opcode %s" % bin(opcode, 4))
 
-        print("")
+        opcode.next = opcode
 
     return instrctionLogic
 
