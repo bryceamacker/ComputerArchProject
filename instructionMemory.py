@@ -15,9 +15,9 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
     """
 
     # This basically means this function will run every time there is a
-    # rising clock edge from the clk signal   
+    # rising clock edge from the clk signal
     @always(clk.posedge)
-    def instrctionLogic():
+    def instructionLogic():
         try:
             ins_line = programMemory[int(pc)]
             instruction.next = int(ins_line, 2)
@@ -31,7 +31,7 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
             rd = bin(instruction[6:3], 3)
             rt = bin(instruction[9:6], 3)
             rs = bin(instruction[12:9], 3)
-            print("%s %s %s %s" % (func_dict[func], registers_dict[rs], registers_dict[rt], registers_dict[rd]))
+            print("%s %s %s %s" % (func_dict[func], registers_dict[rd], registers_dict[rs], registers_dict[rt]))
 
         elif opcode == jump:
             address = bin(instruction[12:], 12)
@@ -48,7 +48,7 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
 
         opcode.next = opcode
 
-    return instrctionLogic
+    return instructionLogic
 
 # def IF_ID_pipeline(instruction, clk):
 #     """ Stores all instructions and outputs appropriate signals after decoding them
@@ -59,6 +59,6 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
 #     """
 
 #     # This basically means this function will run every time there is a
-#     # rising clock edge from the clk signal   
+#     # rising clock edge from the clk signal
 #     @always(clk.posedge)
 #     def instrctionLogic():

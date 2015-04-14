@@ -1,5 +1,58 @@
 #!/usr/local/bin/python
 
+#########################################################################################################
+#########################################################################################################
+#
+################ R-Type Format ################
+# Instruction Format:
+# [opcode] [rs] [rt] [rd] [func]
+#    4       3    3    3     3
+#
+# Assembly Format:
+# add $rd, $rs, $rt
+# slt $rd, $rs, $rt
+#
+# Examples:
+# add $r1, $r2, $r3: $r1 = $r2 + $r3
+# slt $r1, $r2, $r3: $r1 = ($r2 < $r3) ? 1 : 0
+#
+###############################################
+#
+################ I-Type Format ################
+# Instruction Format:
+# [opcode] [rs] [rt] [immediate]
+#    4       3    3       6
+#
+# Assembly Format:
+# addi $rs, $rt, immediate
+# lw $rs, immediate($rt)
+# beq $rs, $rt, immediate
+# sll $rs, $rt, immediate
+#
+# Examples:
+# addi $r1, $r2, 8: $r1 = $r2 + 8
+# lw $r1, 4($r2): $r1 = M[$r2 + 4]
+# beq $r1, $r2, LABEL: if($r1 == $r2) PC = PC + 4 + LABEL
+# sll $r1, $r2, 8: $r1 = $r3 << 8
+#
+###############################################
+#
+################ J-Type Format ################
+# Instruction Format:
+# [opcode] [address]
+#    4        12
+#
+# Assembly Format:
+# j JumpAddr
+#
+# Examples:
+# j LABEL: PC = LABEL
+#
+###############################################
+#
+#########################################################################################################
+#########################################################################################################
+
 # Arrays to hold all the types of commands
 rTypes = ["add", "sub", "and", "or", "xor", "slt"]
 iTypes = ["slti", "addi", "subi", "andi", "ori", "lw", "sw", "sll", "srl", "beq"]
