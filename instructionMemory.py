@@ -2,15 +2,11 @@ from myhdl import *
 from memoryDictionaries import *
 
 
-def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
+def instructionMemory(pc, clk, instruction, programMemory):
     """ Stores all instructions and outputs appropriate signals after decoding them
     pc -- input instruction memory address
     instruction -- output
-    opcode -- output
     clk -- clock input
-    rd -- output (read reg2)
-    rt -- output (read reg1)
-    rs -- output (write reg)
     programMemory -- instruction memory loaded in at startup
     """
 
@@ -18,6 +14,11 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
     # rising clock edge from the clk signal
     @always(clk.posedge)
     def instructionLogic():
+        opcode = Signal()
+        rd = Signal()
+        rt = Signal()
+        rs = Signal()
+
         try:
             ins_line = programMemory[int(pc)]
             instruction.next = int(ins_line, 2)
@@ -42,7 +43,7 @@ def instructionMemory(pc, clk, instruction, rd, rt, rs, programMemory, opcode):
             rt = bin(instruction[9:6], 3)
             rs = bin(instruction[12:9], 3)
             try:
-                print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rs], registers_dict[rt], imm))
+                print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rt], registers_dict[rs], imm))
             except KeyError:
                 print("No instruction for opcode %s" % bin(opcode, 4))
 

@@ -1,9 +1,10 @@
 from myhdl import *
+from alu import *
 from memoryDictionaries import *
 
 def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp, memWrite, ALUSrc, regWrite):
-    """ 
-    opcode -- input 
+    """
+    opcode -- input
     clk -- input
     RegDst    -- output
     jumpSig      -- output
@@ -16,11 +17,24 @@ def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp,
     regWrite  -- output
     """
 
-    @always_comb
-    def controlLogic():   
-        opcode = instruction[:12]  
+    @always(clk.posedge)
+    def controlLogic():
+        opcode = instruction[16:12]
         if opcode == r_type:
-            ALUOp.next = 2
+            func = instruction[3:0]
+            if (func == add):
+              ALUOp.next = ALUAddOp
+            elif (func == sub):
+              ALUOp.next = ALUSubOp
+            elif (func == logical_and):
+              ALUOp.next = ALUAndOp
+            elif (func == logical_or):
+              ALUOp.next = ALUOrOp
+            elif (func == xor):
+              ALUOp.next = ALUXorOp
+            elif (func == slt):
+              ALUOp.next = ALUSltOp
+
             ALUSrc.next = 0
             branch.next = 0
             memRead.next = 0
@@ -31,13 +45,49 @@ def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp,
             jumpSig.next = 0
 
         if opcode == addi:
-            pass
+            ALUOp.next = ALUAddOp
+            ALUSrc.next = 1
+            branch.next = 0
+            memRead.next = 0
+            memWrite.next = 0
+            memToReg.next = 0
+            RegDst.next = 0
+            regWrite.next = 1
+            jumpSig.next = 0
+
         if opcode == subi:
-            pass
+            ALUOp.next = ALUSubOp
+            ALUSrc.next = 1
+            branch.next = 0
+            memRead.next = 0
+            memWrite.next = 0
+            memToReg.next = 0
+            RegDst.next = 0
+            regWrite.next = 1
+            jumpSig.next = 0
+
         if opcode == andi:
-            pass
+            ALUOp.next = ALUAndOp
+            ALUSrc.next = 1
+            branch.next = 0
+            memRead.next = 0
+            memWrite.next = 0
+            memToReg.next = 0
+            RegDst.next = 0
+            regWrite.next = 1
+            jumpSig.next = 0
+
         if opcode == ori:
-            pass
+            ALUOp.next = ALUOrOp
+            ALUSrc.next = 1
+            branch.next = 0
+            memRead.next = 0
+            memWrite.next = 0
+            memToReg.next = 0
+            RegDst.next = 0
+            regWrite.next = 1
+            jumpSig.next = 0
+
         if opcode == lw:
             ALUOp.next = 0
             ALUSrc.next = 1
@@ -61,10 +111,26 @@ def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp,
             jumpSig.next = 0
 
         if opcode == sll:
-            pass
+            ALUOp.next = ALUSllOp
+            ALUSrc.next = 1
+            branch.next = 0
+            memRead.next = 0
+            memWrite.next = 0
+            memToReg.next = 0
+            RegDst.next = 0
+            regWrite.next = 1
+            jumpSig.next = 0
 
         if opcode == srl:
-            pass
+            ALUOp.next = ALUSlrOp
+            ALUSrc.next = 1
+            branch.next = 0
+            memRead.next = 0
+            memWrite.next = 0
+            memToReg.next = 0
+            RegDst.next = 0
+            regWrite.next = 1
+            jumpSig.next = 0
 
         if opcode == jump:
             ALUOp.next = 0
@@ -90,19 +156,3 @@ def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp,
 
 
     return controlLogic
-
-def aluControl(instruction, ALUOp, ALUCommand):
-    """
-    instruction -- input
-    ALUOp -- input
-    ALUCommand -- output
-    """
-
-    @always_comb
-    def aluControlLogic():
-        func = instruction[2:]
-        if ALUOp == 2:
-            print("r_type")
-            print("Func: %s" % (bin(func, 3)))
-
-    return aluControlLogic

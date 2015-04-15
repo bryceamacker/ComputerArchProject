@@ -5,8 +5,8 @@
 #
 ################ R-Type Format ################
 # Instruction Format:
-# [opcode] [rs] [rt] [rd] [func]
-#    4       3    3    3     3
+# [opcode]     [rs]    [rt]   [rd]   [func]
+#  [15:12]    [11:9]  [8:6]  [5:3]   [2:0]
 #
 # Assembly Format:
 # add $rd, $rs, $rt
@@ -20,14 +20,14 @@
 #
 ################ I-Type Format ################
 # Instruction Format:
-# [opcode] [rs] [rt] [immediate]
-#    4       3    3       6
+# [opcode]     [rs]    [rt]   [immediate]
+#  [15:12]    [11:9]   [8:6]     [5:0]
 #
 # Assembly Format:
-# addi $rs, $rt, immediate
-# lw $rs, immediate($rt)
-# beq $rs, $rt, immediate
-# sll $rs, $rt, immediate
+# addi $rt, $rs, immediate
+# lw $rt, immediate($rs)
+# beq $rt, $rs, immediate
+# sll $rt, $rs, immediate
 #
 # Examples:
 # addi $r1, $r2, 8: $r1 = $r2 + 8
@@ -40,7 +40,7 @@
 ################ J-Type Format ################
 # Instruction Format:
 # [opcode] [address]
-#    4        12
+#  [15:12]  [11:0]
 #
 # Assembly Format:
 # j JumpAddr
@@ -147,15 +147,15 @@ def parseITypeLine(line):
   pieces = line.split()
 
   opcode = pieces[0]
-  rs = pieces[1].replace(',', '')
+  rt = pieces[1].replace(',', '')
   if opcode == "lw" or opcode == "sw":
-    rtImmediate = pieces[2]
-    secondaryPieces = rtImmediate.split("(")
+    rsImmediate = pieces[2]
+    secondaryPieces = rsImmediate.split("(")
     immediate = secondaryPieces[0]
-    rt = secondaryPieces[1][0:3].replace(',', '')
+    rs = secondaryPieces[1][0:3].replace(',', '')
 
   else:
-    rt = pieces[2].replace(',', '')
+    rs = pieces[2].replace(',', '')
     immediate = pieces[3]
 
   binary = opcodeDictionary[opcode] + registerDictionary[rs] + registerDictionary[rt] + expandImmediate(immediate, 6)
