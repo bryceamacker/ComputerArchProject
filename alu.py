@@ -37,10 +37,10 @@ def alu(instruction, ALUOp, ALUIn1, ALUIn2, ALUOut, zero):
                 ALUOutVal = 1
             else:
                 ALUOutVal = 0
-        # elif ALUOp == ALUSllOp:
-        #     ALUOutVal = ALUIn1 << ALUIn2
-        # elif ALUOp == ALUSlrOp:
-        #     ALUOutVal = ALUIn1 >> ALUIn2
+        elif ALUOp == ALUSllOp:
+            ALUOutVal = ALUIn1 << ALUIn2
+        elif ALUOp == ALUSlrOp:
+            ALUOutVal = ALUIn1 >> ALUIn2
         else:
             ALUOutVal = 0
 

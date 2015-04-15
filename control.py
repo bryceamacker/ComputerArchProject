@@ -17,7 +17,7 @@ def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp,
     regWrite  -- output
     """
 
-    @always(clk.posedge)
+    @always_comb
     def controlLogic():
         opcode = instruction[16:12]
         if opcode == r_type:

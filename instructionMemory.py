@@ -51,7 +51,7 @@ def instructionMemory(pc, clk, instruction, programMemory):
 
     return instructionLogic
 
-def instructionDecode(instruction, opcode, rs, rt, rd, func, address):
+def instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address):
     @always_comb
     def instructionDecodeLogic():
         opcode.next = instruction[16:12]
@@ -59,7 +59,8 @@ def instructionDecode(instruction, opcode, rs, rt, rd, func, address):
         rt.next = instruction[9:6]         #- to read_reg_2 and mux controlled by RegDst
         rd.next = instruction[6:3]         #- to the mux controlled by RegDst
         func.next = instruction[3:0]         #- to ALUCtrl
-        address.next = instruction[6:0]     #- to Sign Extend
+        immediate.next = instruction[6:0]     #- to Sign Extend
+        address.next = instruction[12:0]     #- to Sign Extend
 
     return instructionDecodeLogic
 

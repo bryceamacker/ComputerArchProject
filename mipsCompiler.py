@@ -128,9 +128,9 @@ def parseLine(line, lineNum):
   if opcode in rTypes:
     return parseRTypeLine(line)
   elif opcode in iTypes:
-    return parseITypeLine(line)
+    return parseITypeLine(line, lineNum)
   elif opcode in jTypes:
-    return parseJTypeLine(line)
+    return parseJTypeLine(line, lineNum)
 
 def parseRTypeLine(line):
   pieces = line.split()
@@ -143,7 +143,7 @@ def parseRTypeLine(line):
   binary = opcodeDictionary[opcode] + registerDictionary[rs] + registerDictionary[rt] + registerDictionary[rd] + funcDictionary[opcode]
   return binary
 
-def parseITypeLine(line):
+def parseITypeLine(line, lineNum):
   pieces = line.split()
 
   opcode = pieces[0]
@@ -158,16 +158,16 @@ def parseITypeLine(line):
     rs = pieces[2].replace(',', '')
     immediate = pieces[3]
 
-  binary = opcodeDictionary[opcode] + registerDictionary[rs] + registerDictionary[rt] + expandImmediate(immediate, 6)
+  binary = opcodeDictionary[opcode] + registerDictionary[rs] + registerDictionary[rt] + expandImmediate(immediate, 6, lineNum, 1)
   return binary
 
-def parseJTypeLine(line):
+def parseJTypeLine(line, lineNum):
   pieces = line.split()
 
   opcode = pieces[0]
   address = pieces[1]
 
-  binary = opcodeDictionary[opcode] + expandImmediate(address, 12)
+  binary = opcodeDictionary[opcode] + expandImmediate(address, 12, lineNum, 0)
   return binary
 
 def getLabels(codeLines):
@@ -184,11 +184,16 @@ def getLabels(codeLines):
         codeWithoutLabels.append(line)
   return labels, codeWithoutLabels
 
-def expandImmediate(value, numBits):
+def expandImmediate(value, numBits, lineNum, relative):
   if value in labels:
-    value = labels[value]
+    base = 10
+    if relative == 1:
+        number = str(int(labels[value]) - int(lineNum*2))
+        print str(number) + " = " + str(int(labels[value])) + " - " + str(int(lineNum*2))
+    else:
+        number = labels[value]
 
-  if value.startswith("0x"):
+  elif value.startswith("0x"):
     number = value[2:]
     base = 16
   else:
@@ -225,4 +230,4 @@ def stripComments(fileName):
 
 if __name__ == '__main__':
   machineCode = compile("ProcessorAssembly")
-  printCode(machineCode)
+  # printCode(machineCode)

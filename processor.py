@@ -56,7 +56,7 @@ def testbench():
 
     count = Signal(0)
     pc = Signal(intbv(0)[16:])
-    PCAddOut = Signal(0)
+    PCAddOut = Signal(intbv(0)[16:])
     pc_write = Signal(1)
 
     # Register file signals ## GONNA FIND A WAY TO REMOVE THESE
@@ -75,6 +75,8 @@ def testbench():
     pcMuxOut = Signal(intbv(0)[16:])
     signExtendOut = Signal(intbv(0)[16:])
     andBranchOut = Signal(0)
+    addressShiftOut = Signal(intbv(0)[14:])
+    weirdshifty = Signal(intbv(0)[16:])
 
     # Decoded instruction signals
     opcode = Signal(intbv(init_instruction)[4:])
@@ -83,6 +85,7 @@ def testbench():
     rd = Signal(intbv(init_instruction)[3:])
     func = Signal(intbv(init_instruction)[3:])
     immediate = Signal(intbv(init_instruction)[6:])
+    address = Signal(intbv(init_instruction)[12:])
 
     # Creates an instruction signal 16 bits wide, init to 0xFFFF
     instruction = Signal(intbv(init_instruction)[16:])
@@ -92,7 +95,7 @@ def testbench():
     func_Array.append(instMem_inst)
 
     # Instruction decoder
-    instructionDecode_inst = instructionDecode(instruction, opcode, rs, rt, rd, func, immediate)
+    instructionDecode_inst = instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address)
     func_Array.append(instructionDecode_inst)
 
     # Mux in to write register
@@ -129,12 +132,8 @@ def testbench():
     signExtend_branch = signExtend(immediate, signExtendOut)
     func_Array.append(signExtend_branch)
 
-    # Immediate shift
-    shifter_branch = shiftLeft(signExtendOut, 2, shiftOut)
-    func_Array.append(shifter_branch)
-
     # Branch adder
-    adder_branch = adder(PCAddOut, shiftOut, PCBranchOut)
+    adder_branch = adder(PCAddOut, signExtendOut, PCBranchOut)
     func_Array.append(adder_branch)
 
     # And for PC
@@ -145,9 +144,17 @@ def testbench():
     adder_PCIncrementer = adder(pc, Signal(intbv(2)), PCAddOut)
     func_Array.append(adder_PCIncrementer)
 
-    # Mux for PC
+    # Address shift
+    shifter_address = shiftLeft(address, 2, addressShiftOut)
+    func_Array.append(shifter_address)
+
+    # Mux for branch PC
     mux_branch = mux(PCAddOut, PCBranchOut, andBranchOut, pcMuxOut)
     func_Array.append(mux_branch)
+
+    # Mux for jump PC
+    mux_jump = mux(pcMuxOut, addressShiftOut, jump, pcMuxOut)
+    func_Array.append(mux_jump)
 
     # Control module
     control_inst = control(instruction, clk, RegDst, jump, branch, memRead, memToReg, ALUOp, memWrite, ALUSrc, regWrite)
@@ -168,5 +175,5 @@ if __name__ == '__main__':
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
     # sim.run(2 * clockCycles + 1)
-    sim.run(1000)
+    sim.run(22*2)
     print(registers_mem)

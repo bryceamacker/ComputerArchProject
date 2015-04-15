@@ -1,0 +1,47 @@
+andi $t1, $t1, 0x0                              # 0x0000
+addi $v0, $t1, 0x4                              # 0x0002
+sll $v0, $v0, 4                                 # 0x0004
+addi $v1, $t1, 0x1                              # 0x0006
+sll $v1, $v1, 8                                 # 0x0008
+addi $v1, $v1, 0x1                              # 0x000A
+sll $v1, $v1, 4                                 # 0x000C
+addi $v2, $t1, 0xF                              # 0x000E
+addi $v3, $t1, 0xF                              # 0x0010
+sll $v3, $v3, 4                                 # 0x0012
+andi $t0, $t0, 0x0                              # 0x0014
+addi $a0, $t1, 0x1                              # 0x0016
+sll $a0, $a0, 4                                 # 0x0018
+addi $a1, $t1, 0x5                              # 0x001A
+WHILE: andi $t0, $t0, 0x0                       # 0x001C
+slt $t1, $t0, $a1                               # 0x001E
+beq $t0, $t1, CONTINUE_LOOP                     # 0x0020
+j ENDLOOP                                       # 0x0022
+CONTINUE_LOOP: subi $a1, $a1, 1                 # 0x0024
+lw $t0, 0($a0)                                  # 0x0026
+andi $t1, $t1, 0                                # 0x0028
+addi $t1, $t1, 1                                # 0x002A
+sll $t1, $t1, 8                                 # 0x002C
+slt $t1, $t0, $t1                               # 0x002E
+andi $t0, $t0, 0                                # 0x0030
+beq $t1, $t0, IF                                # 0x0032
+j ELSE                                          # 0x0034
+IF: srl $v0, $v0, 3                             # 0x0036
+or $v1, $v1, $v0                                # 0x0038
+andi $t1, $t1, 0x0                              # 0x003A
+addi $t1, $t1, 0xF                              # 0x003C
+sll $t1, $t1, 4                                 # 0x003E
+addi $t1, $t1, 0xF                              # 0x0040
+sll $t1, $t1, 8                                 # 0x0042
+sw $t1, 0($a0)                                  # 0x0044
+j END                                           # 0x0046
+ELSE: sll $v2, $v2, 2                           # 0x0048
+xor $v3, $v3, $v2                               # 0x004A
+andi $t1, $t1, 0x0                              # 0x004C
+addi $t1, $t1, 0xF                              # 0x004E
+sll $t1, $t1, 4                                 # 0x0050
+addi $t1, $t1, 0xF                              # 0x0052
+sw $t1, 0($a0)                                  # 0x0054
+j END                                           # 0x0056
+END: addi $a0, $a0, 2                           # 0x0058
+j WHILE                                         # 0x005A
+ENDLOOP:                                        # 0x005C
