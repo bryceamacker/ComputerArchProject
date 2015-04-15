@@ -1,6 +1,6 @@
 from myhdl import always
 
-def programCounter(pc_write, clk, pc):
+def programCounter(pc_write, clk, pc, pcIn):
     """ Incrementer with enable.
     pc_write -- input (enable pc += 2)
     pc -- output instruction address
@@ -8,14 +8,13 @@ def programCounter(pc_write, clk, pc):
 
     """
 
-    # This basically means this function will run everytime there is a 
-    # rising clock edge from the clk signal   
+    # This basically means this function will run everytime there is a
+    # rising clock edge from the clk signal
     @always(clk.posedge)
     def incLogic():
         try:
-            if pc_write:
-                pc.next = pc + 2
+            pc.next = pcIn
         except KeyError:
-            print("")
+            print("PC Increment Error")
 
     return incLogic

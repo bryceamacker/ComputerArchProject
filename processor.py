@@ -55,9 +55,9 @@ def testbench():
     opcode = Signal(intbv(init_instruction)[3:])
 
     count = Signal(0)
-    pc = Signal(0)
+    pc = Signal(intbv(0)[16:])
     PCAddOut = Signal(0)
-    pc_write = 1
+    pc_write = Signal(1)
 
     # Register file signals ## GONNA FIND A WAY TO REMOVE THESE
     data1 = Signal(intbv(init_instruction)[16:])
@@ -72,32 +72,41 @@ def testbench():
     memToRegOut = Signal(intbv(0)[16:])
     shiftOut = Signal(intbv(0)[16:])
     PCBranchOut = Signal(intbv(0)[16:])
+    pcMuxOut = Signal(intbv(0)[16:])
     signExtendOut = Signal(intbv(0)[16:])
     andBranchOut = Signal(0)
 
+    # Decoded instruction signals
+    opcode = Signal(intbv(init_instruction)[4:])
+    rs = Signal(intbv(init_instruction)[3:])
+    rt = Signal(intbv(init_instruction)[3:])
+    rd = Signal(intbv(init_instruction)[3:])
+    func = Signal(intbv(init_instruction)[3:])
+    immediate = Signal(intbv(init_instruction)[6:])
+
     # Creates an instruction signal 16 bits wide, init to 0xFFFF
     instruction = Signal(intbv(init_instruction)[16:])
-
-    # Program counter
-    pc_inst = programCounter(pc_write, clk, pc)
-    func_Array.append(pc_inst)
 
     # Instruction memory
     instMem_inst = instructionMemory(pc, clk, instruction, programMemory)
     func_Array.append(instMem_inst)
 
+    # Instruction decoder
+    instructionDecode_inst = instructionDecode(instruction, opcode, rs, rt, rd, func, immediate)
+    func_Array.append(instructionDecode_inst)
+
     # Mux in to write register
     RegDstOut = Signal(intbv(0)[3:])
-    mux_regDest = mux( instruction[9:6], instruction[6:3], RegDst, RegDstOut)
+    mux_regDest = mux(rt, rd, RegDst, RegDstOut)
     func_Array.append(mux_regDest)
 
     # Register file
-    register_inst = registers(instruction[12:9], instruction[9:6], RegDstOut, memToRegOut, regWrite, clk, data1, data2)
+    register_inst = registers(rs, rt, RegDstOut, memToRegOut, regWrite, clk, data1, data2)
     func_Array.append(register_inst)
 
     # Mux in to ALU
     ALUSrcOut = Signal(intbv(0)[16:])
-    mux_ALUSrc = mux(data2, instruction[6:0], ALUSrc, ALUSrcOut)
+    mux_ALUSrc = mux(data2, signExtendOut, ALUSrc, ALUSrcOut)
     func_Array.append(mux_ALUSrc)
 
     # ALU
@@ -112,13 +121,13 @@ def testbench():
     mux_memToReg = mux(ALUOut, readData, memToReg, memToRegOut)
     func_Array.append(mux_memToReg)
 
-    # PC incrementer
-    adder_PCIncrementer = adder(pc, 2, PCAddOut)
-    func_Array.append(adder_PCIncrementer)
+    # Program counter
+    pc_inst = programCounter(pc_write, clk, pc, pcMuxOut)
+    func_Array.append(pc_inst)
 
     # Sign extend
-    # signExtend_branch = signExtend(instruction[6:0], signExtendOut)
-    # func_Array.append(signExtend_branch)
+    signExtend_branch = signExtend(immediate, signExtendOut)
+    func_Array.append(signExtend_branch)
 
     # Immediate shift
     shifter_branch = shiftLeft(signExtendOut, 2, shiftOut)
@@ -132,8 +141,12 @@ def testbench():
     and_branch = andGate(branch, zero, andBranchOut)
     func_Array.append(and_branch)
 
+    # PC incrementer
+    adder_PCIncrementer = adder(pc, Signal(intbv(2)), PCAddOut)
+    func_Array.append(adder_PCIncrementer)
+
     # Mux for PC
-    mux_branch = mux(PCAddOut, PCBranchOut, andBranchOut, pc)
+    mux_branch = mux(PCAddOut, PCBranchOut, andBranchOut, pcMuxOut)
     func_Array.append(mux_branch)
 
     # Control module
@@ -154,5 +167,6 @@ if __name__ == '__main__':
     [ os.remove (f) for f in os.listdir(".") if f.endswith(".vcd") ]
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
-    sim.run(2 * clockCycles + 1)
+    # sim.run(2 * clockCycles + 1)
+    sim.run(1000)
     print(registers_mem)

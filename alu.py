@@ -13,35 +13,42 @@ def alu(instruction, ALUOp, ALUIn1, ALUIn2, ALUOut, zero):
     """
     instruction -- input
     ALUOp -- input
-    ALUCommand -- output
+    ALUIn1 -- input
+    ALUIn2 -- input
+    ALUOut -- output
+    zero -- output
     """
 
     @always_comb
     def aluLogic():
         func = instruction[2:]
         if ALUOp == ALUAddOp:
-            ALUOut = ALUIn1 + ALUIn2
-        elif ALUOp == ALUSubOp:
-            ALUOut = ALUIn1 - ALUIn2
+            ALUOutVal = ALUIn1 + ALUIn2
+        # elif ALUOp == ALUSubOp:
+        #     ALUOutVal = ALUIn1 - ALUIn2
         elif ALUOp == ALUAndOp:
-            ALUOut = ALUIn1 & ALUIn2
+            ALUOutVal = ALUIn1 & ALUIn2
         elif ALUOp == ALUOrOp:
-            ALUOut = ALUIn1 | ALUIn2
+            ALUOutVal = ALUIn1 | ALUIn2
         elif ALUOp == ALUXorOp:
-            ALUOut = ALUIn1 ^ ALUIn2
+            ALUOutVal = ALUIn1 ^ ALUIn2
         elif ALUOp == ALUSltOp:
             if (ALUIn1 < ALUIn2):
-                ALUOut = 1
+                ALUOutVal = 1
             else:
-                ALUOut = 0
-        elif ALUOp == ALUSllOp:
-            ALUOut = ALUIn1 << ALUIn2
-        elif ALUOp == ALUSlrOp:
-            ALUOut = ALUIn1 >> ALUIn2
+                ALUOutVal = 0
+        # elif ALUOp == ALUSllOp:
+        #     ALUOutVal = ALUIn1 << ALUIn2
+        # elif ALUOp == ALUSlrOp:
+        #     ALUOutVal = ALUIn1 >> ALUIn2
         else:
-            ALUOut = 0
+            ALUOutVal = 0
 
-        if ALUOut == 0:
-            zero = 1
+        ALUOut.next = ALUOutVal
+
+        if ALUOutVal == 0:
+            zero.next = 1
+        else:
+            zero.next = 0
 
     return aluLogic

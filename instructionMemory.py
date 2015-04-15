@@ -51,6 +51,18 @@ def instructionMemory(pc, clk, instruction, programMemory):
 
     return instructionLogic
 
+def instructionDecode(instruction, opcode, rs, rt, rd, func, address):
+    @always_comb
+    def instructionDecodeLogic():
+        opcode.next = instruction[16:12]
+        rs.next = instruction[12:9]         #- to read_reg_1
+        rt.next = instruction[9:6]         #- to read_reg_2 and mux controlled by RegDst
+        rd.next = instruction[6:3]         #- to the mux controlled by RegDst
+        func.next = instruction[3:0]         #- to ALUCtrl
+        address.next = instruction[6:0]     #- to Sign Extend
+
+    return instructionDecodeLogic
+
 # def IF_ID_pipeline(instruction, clk):
 #     """ Stores all instructions and outputs appropriate signals after decoding them
 
