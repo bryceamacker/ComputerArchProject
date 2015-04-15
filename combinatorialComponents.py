@@ -2,10 +2,10 @@ from myhdl import *
 
 def mux(in1, in2, control, out):
     """
-    in1 -- input
-    in2 -- input
-    control -- input
-    out -- output
+    in1         -- input, input 0
+    in2         -- input, input 1
+    control     -- input, control ine
+    out         -- output, output
     """
 
     @always_comb
@@ -19,9 +19,9 @@ def mux(in1, in2, control, out):
 
 def adder(in1, in2, out):
     """
-    in1 -- input
-    in2 -- input
-    out -- output
+    in1 -- input, input 1
+    in2 -- input, input 2
+    out -- output, output
     """
 
     @always_comb
@@ -32,9 +32,9 @@ def adder(in1, in2, out):
 
 def andGate(in1, in2, out):
     """
-    in1 -- input
-    in2 -- input
-    out -- output
+    in1 -- input, input 1
+    in2 -- input, input 2
+    out -- output, output
     """
 
     @always_comb
@@ -45,9 +45,9 @@ def andGate(in1, in2, out):
 
 def shiftLeft(in1, shamt, out):
     """
-    in1 -- input
-    shamt -- input
-    out -- output
+    in1     -- input, input
+    shamt   -- input, shift amount
+    out     -- output, output
     """
 
     @always_comb
@@ -58,8 +58,8 @@ def shiftLeft(in1, shamt, out):
 
 def signExtend(in1, out):
     """
-    in1 -- input
-    out -- output
+    in1 -- input, input
+    out -- output, output
     """
 
     @always_comb

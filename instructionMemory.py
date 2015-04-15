@@ -2,12 +2,12 @@ from myhdl import *
 from memoryDictionaries import *
 
 
-def instructionMemory(pc, clk, instruction, programMemory):
+def instructionMemory(clk, pc, instruction, programMemory):
     """ Stores all instructions and outputs appropriate signals after decoding them
-    pc -- input instruction memory address
-    instruction -- output
-    clk -- clock input
-    programMemory -- instruction memory loaded in at startup
+    clk             -- input, clock line
+    pc              -- input, instruction memory address
+    instruction     -- output, next instruction
+    programMemory   -- input, instruction memory loaded in at startup, PROBABLY SHOULD FIND A BETTER WAY TO DO THIS
     """
 
     # This basically means this function will run every time there is a
@@ -52,6 +52,17 @@ def instructionMemory(pc, clk, instruction, programMemory):
     return instructionLogic
 
 def instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address):
+    """ Stores all instructions and outputs appropriate signals after decoding them
+    instruction     -- input, next instruction
+    opcode          -- output, instruction[15:12]
+    rs              -- output, instruction[11:9]
+    rt              -- output, instruction[8:6]
+    rd              -- output, instruction[5:3]
+    func            -- output, instruction[2:0]
+    immediate       -- output, instruction[5:0]
+    address         -- output, instruction[12:11]
+    """
+
     @always_comb
     def instructionDecodeLogic():
         opcode.next = instruction[16:12]

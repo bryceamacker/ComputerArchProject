@@ -188,8 +188,7 @@ def expandImmediate(value, numBits, lineNum, relative):
   if value in labels:
     base = 10
     if relative == 1:
-        number = str(int(labels[value]) - int(lineNum*2))
-        print str(number) + " = " + str(int(labels[value])) + " - " + str(int(lineNum*2))
+        number = str(int(labels[value]) - int(lineNum*2) - 2)
     else:
         number = labels[value]
 

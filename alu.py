@@ -9,19 +9,18 @@ ALUSltOp = 8
 ALUSllOp = 9
 ALUSlrOp = 10
 
-def alu(instruction, ALUOp, ALUIn1, ALUIn2, ALUOut, zero):
+def alu(ALUOp, func, ALUIn1, ALUIn2, ALUOut, zero):
     """
-    instruction -- input
-    ALUOp -- input
-    ALUIn1 -- input
-    ALUIn2 -- input
-    ALUOut -- output
-    zero -- output
+    ALUOp   -- input, ALU operation to perform
+    func    -- input, function part of the instruction, SHOULDN'T REALLY BE HERE
+    ALUIn1  -- input, in 1
+    ALUIn2  -- input, in2
+    ALUOut  -- output, output
+    zero    -- output, whether or not the out is zero
     """
 
     @always_comb
     def aluLogic():
-        func = instruction[2:]
         if ALUOp == ALUAddOp:
             ALUOutVal = ALUIn1 + ALUIn2
         # elif ALUOp == ALUSubOp:

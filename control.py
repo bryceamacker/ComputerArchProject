@@ -2,19 +2,18 @@ from myhdl import *
 from alu import *
 from memoryDictionaries import *
 
-def control(instruction, clk, RegDst, jumpSig, branch, memRead, memToReg, ALUOp, memWrite, ALUSrc, regWrite):
+def control(instruction, RegDst, jumpSig, branch, memRead, memToReg, ALUOp, memWrite, ALUSrc, regWrite):
     """
-    opcode -- input
-    clk -- input
-    RegDst    -- output
-    jumpSig      -- output
-    branch    -- output
-    memRead   -- output
-    memToReg  -- output
-    ALUOp     -- output
-    memWrite  -- output
-    ALUSrc    -- output
-    regWrite  -- output
+    instruction -- input, current instruction
+    RegDst      -- output, mux input
+    jumpSig     -- output, mux input
+    branch      -- output, mux input
+    memRead     -- output, read line for data memory
+    memToReg    -- output, mux input
+    ALUOp       -- output, ALU operation to perform
+    memWrite    -- output, write line for data memory
+    ALUSrc      -- output, mux input
+    regWrite    -- output, write line for register file
     """
 
     @always_comb

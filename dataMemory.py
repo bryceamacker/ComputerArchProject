@@ -4,12 +4,12 @@ memory=[i for i in range(65535)]
 
 def dataMemory(clk, address, writeData, readData, memRead, memWrite):
     """
-    clk -- input
-    address -- input
-    writeData -- input
-    readData -- output
-    memRead  -- input
-    memWrite -- input
+    clk         -- input, clk line
+    address     -- input, address for memory operation
+    writeData   -- input, data for write
+    readData    -- output, out data for read
+    memRead     -- input, whether or not to read
+    memWrite    -- input, whether or not to write
     """
 
     @always(clk.posedge)
