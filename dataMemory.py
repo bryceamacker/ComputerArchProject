@@ -1,6 +1,6 @@
 from myhdl import *
 
-memory=[i for i in range(65535)]
+memory=[i for i in range(65536)]
 a0 = 16
 memory[a0] =     int("0101", 16)
 memory[a0 + 2] = int("0110", 16)

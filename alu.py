@@ -9,7 +9,7 @@ ALUSltOp = 8
 ALUSllOp = 9
 ALUSlrOp = 10
 
-def alu(ALUOp, func, ALUIn1, ALUIn2, ALUOut, zero):
+def alu(clk, ALUOp, func, ALUIn1, ALUIn2, ALUOut, zero):
     """
     ALUOp   -- input, ALU operation to perform
     func    -- input, function part of the instruction, SHOULDN'T REALLY BE HERE
@@ -43,10 +43,12 @@ def alu(ALUOp, func, ALUIn1, ALUIn2, ALUOut, zero):
         else:
             ALUOutVal = 0
 
+        #### This shouldn't be here
         if ALUOutVal >= 65536:
             ALUOutVal = 65535
         elif ALUOutVal < 0:
             ALUOutVal = 0
+        #### This shouldn't be here
 
         ALUOut.next = ALUOutVal
 

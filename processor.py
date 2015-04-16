@@ -114,7 +114,7 @@ def testbench():
     func_Array.append(mux_ALUSrc)
 
     # ALU
-    comb_ALU = alu(ALUOp, func, regData1, ALUSrcOut, ALUOut, zero)
+    comb_ALU = alu(clk, ALUOp, func, regData1, ALUSrcOut, ALUOut, zero)
     func_Array.append(comb_ALU)
 
     # Data memory

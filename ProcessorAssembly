@@ -31,7 +31,7 @@ addi $a1, $t1, 0x5
 WHILE:
   # while ($a1 > 0)
   andi $t0, $t0, 0x0
-  slt $t1, $t0, $a1
+  slt $t1, $a1, $t0
   beq $t0, $t1, CONTINUE_LOOP
   j ENDLOOP
   CONTINUE_LOOP:
