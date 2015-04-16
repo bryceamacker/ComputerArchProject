@@ -22,7 +22,7 @@ def registers(clk, read1, read2, write, wd, regWrite, data1, data2):
 
         if regWrite:
             registers_mem[int(write.val)] = bin(wd, 16)
-            print "New " + str(write.val) + ": " + str(wd)
+            # print "New " + str(write.val) + ": " + str(wd)
 
 
     return registersLogic

@@ -2,7 +2,7 @@ from myhdl import *
 from memoryDictionaries import *
 
 
-def instructionMemory(clk, pc, instruction, programMemory):
+def instructionMemory(clk, pc, instruction, programMemory, staller):
     """ Stores all instructions and outputs appropriate signals after decoding them
     clk             -- input, clock line
     pc              -- input, instruction memory address
@@ -20,8 +20,13 @@ def instructionMemory(clk, pc, instruction, programMemory):
         rs = Signal()
 
         try:
-            ins_line = programMemory[int(pc)]
-            instruction.next = int(ins_line, 2)
+            if staller == 5:
+                ins_line = programMemory[int(pc)]
+                instruction.next = int(ins_line, 2)
+                staller.next = 0
+            else:
+                instruction.next = 32768
+                staller.next = staller + 1
         except KeyError:
             pass
         # print("Instruction: %s " % (bin(instruction, 16)))
@@ -43,7 +48,10 @@ def instructionMemory(clk, pc, instruction, programMemory):
             rt = bin(instruction[9:6], 3)
             rs = bin(instruction[12:9], 3)
             try:
-                print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rt], registers_dict[rs], imm)),
+                if (staller == 5):
+                    print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rt], registers_dict[rs], imm)),
+                else:
+                    print("Stall"),
             except KeyError:
                 print("No instruction for opcode %s" % bin(opcode, 4))
 

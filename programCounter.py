@@ -15,8 +15,8 @@ def programCounter(clk, pc_write, pcIn, pc, staller):
     def incLogic():
         if pc_write and (staller.val == 5):
             pc.next = pcIn
-            staller.next = 0
-        else:
-            staller.next = staller + 1
+            # staller.next = 0
+        # else:
+            # staller.next = staller + 1
 
     return incLogic

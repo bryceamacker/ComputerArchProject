@@ -6,6 +6,7 @@ from control import *
 from combinatorialComponents import *
 from alu import *
 from dataMemory import *
+from pipeline import *
 import os
 from mipsCompiler import *
 
@@ -94,7 +95,7 @@ def testbench():
     instruction = Signal(intbv(init_instruction)[16:])
 
     # Instruction memory
-    seq_instructionMemory = instructionMemory(clk, pc, instruction, programMemory)
+    seq_instructionMemory = instructionMemory(clk, pc, instruction, programMemory, staller)
     func_Array.append(seq_instructionMemory)
 
     # Instruction decoder
