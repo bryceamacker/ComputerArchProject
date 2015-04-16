@@ -23,8 +23,8 @@ def alu(ALUOp, func, ALUIn1, ALUIn2, ALUOut, zero):
     def aluLogic():
         if ALUOp == ALUAddOp:
             ALUOutVal = ALUIn1 + ALUIn2
-        # elif ALUOp == ALUSubOp:
-        #     ALUOutVal = ALUIn1 - ALUIn2
+        elif ALUOp == ALUSubOp:
+            ALUOutVal = ALUIn1 - ALUIn2
         elif ALUOp == ALUAndOp:
             ALUOutVal = ALUIn1 & ALUIn2
         elif ALUOp == ALUOrOp:
@@ -41,6 +41,11 @@ def alu(ALUOp, func, ALUIn1, ALUIn2, ALUOut, zero):
         elif ALUOp == ALUSlrOp:
             ALUOutVal = ALUIn1 >> ALUIn2
         else:
+            ALUOutVal = 0
+
+        if ALUOutVal >= 65536:
+            ALUOutVal = 65535
+        elif ALUOutVal < 0:
             ALUOutVal = 0
 
         ALUOut.next = ALUOutVal

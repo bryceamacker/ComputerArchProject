@@ -1,6 +1,12 @@
 from myhdl import *
 
 memory=[i for i in range(65535)]
+a0 = 16
+memory[a0] =     int("0101", 16)
+memory[a0 + 2] = int("0110", 16)
+memory[a0 + 4] = int("0011", 16)
+memory[a0 + 6] = int("00F0", 16)
+memory[a0 + 8] = int("00FF", 16)
 
 def dataMemory(clk, address, writeData, readData, memRead, memWrite):
     """

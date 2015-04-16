@@ -143,7 +143,7 @@ def control(instruction, RegDst, jumpSig, branch, memRead, memToReg, ALUOp, memW
             jumpSig.next = 1
 
         if opcode == beq:
-            ALUOp.next = 1
+            ALUOp.next = ALUSubOp
             ALUSrc.next = 0
             branch.next = 1
             memRead.next = 0

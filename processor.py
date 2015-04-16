@@ -56,6 +56,7 @@ def testbench():
     pc = Signal(intbv(0)[16:])
     PCAddOut = Signal(intbv(0)[16:])
     pc_write = Signal(1)
+    staller = Signal(0)
 
     # Register file signals ## GONNA FIND A WAY TO REMOVE THESE
     data1 = Signal(intbv(init_instruction)[16:])
@@ -123,7 +124,7 @@ def testbench():
     func_Array.append(mux_memToReg)
 
     # Program counter
-    pc_inst = programCounter(clk, pc_write, pcJumpOut, pc)
+    pc_inst = programCounter(clk, pc_write, pcJumpOut, pc, staller)
     func_Array.append(pc_inst)
 
     # Sign extend
@@ -169,5 +170,4 @@ if __name__ == '__main__':
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
     # sim.run(2 * clockCycles + 1)
-    sim.run(44*2)
-    print(registers_mem)
+    sim.run(124*2*5)
