@@ -43,14 +43,14 @@ def testbench():
 
     # Control lines
     RegDst = Signal(0)
-    jump = Signal(0)
-    branch = Signal(0)
-    memRead = Signal(0)
-    memToReg = Signal(0)
+    Jump = Signal(0)
+    Branch = Signal(0)
+    MemRead = Signal(0)
+    MemToReg = Signal(0)
     ALUOp = Signal(intbv(0)[4:])
-    memWrite = Signal(0)
+    MemWrite = Signal(0)
     ALUSrc = Signal(0)
-    regWrite = Signal(1)
+    RegWrite = Signal(1)
 
     # Program counter signals
     pc = Signal(intbv(0)[16:])
@@ -58,10 +58,12 @@ def testbench():
     pc_write = Signal(1)
     staller = Signal(0)
 
-    # Register file signals ## GONNA FIND A WAY TO REMOVE THESE
-    data1 = Signal(intbv(init_instruction)[16:])
-    data2 = Signal(intbv(init_instruction)[16:])
-    readData = Signal(intbv(init_instruction)[16:])
+    # Register file signals
+    regData1 = Signal(intbv(init_instruction)[16:])
+    regData2 = Signal(intbv(init_instruction)[16:])
+
+    # Memory out line
+    memReadData = Signal(intbv(init_instruction)[16:])
 
     # ALU Signals
     ALUOut = Signal(intbv(init_instruction)[16:])
@@ -92,40 +94,40 @@ def testbench():
     instruction = Signal(intbv(init_instruction)[16:])
 
     # Instruction memory
-    instMem_inst = instructionMemory(clk, pc, instruction, programMemory)
-    func_Array.append(instMem_inst)
+    seq_instructionMemory = instructionMemory(clk, pc, instruction, programMemory)
+    func_Array.append(seq_instructionMemory)
 
     # Instruction decoder
-    instructionDecode_inst = instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address)
-    func_Array.append(instructionDecode_inst)
+    comb_instructionDecode = instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address)
+    func_Array.append(comb_instructionDecode)
 
     # Mux in to write register
     mux_regDest = mux(rt, rd, RegDst, RegDstOut)
     func_Array.append(mux_regDest)
 
     # Register file
-    register_inst = registers(clk, rs, rt, RegDstOut, memToRegOut, regWrite, data1, data2)
-    func_Array.append(register_inst)
+    seq_registerFile = registers(clk, rs, rt, RegDstOut, memToRegOut, RegWrite, regData1, regData2)
+    func_Array.append(seq_registerFile)
 
     # Mux in to ALU
-    mux_ALUSrc = mux(data2, signExtendOut, ALUSrc, ALUSrcOut)
+    mux_ALUSrc = mux(regData2, signExtendOut, ALUSrc, ALUSrcOut)
     func_Array.append(mux_ALUSrc)
 
     # ALU
-    alu_inst = alu(ALUOp, func, data1, ALUSrcOut, ALUOut, zero)
-    func_Array.append(alu_inst)
+    comb_ALU = alu(ALUOp, func, regData1, ALUSrcOut, ALUOut, zero)
+    func_Array.append(comb_ALU)
 
     # Data memory
-    dataMemory_inst = dataMemory(clk, ALUOut, data2, readData, memRead, memWrite)
-    func_Array.append(dataMemory_inst)
+    seq_dataMemory = dataMemory(clk, ALUOut, regData2, memReadData, MemRead, MemWrite)
+    func_Array.append(seq_dataMemory)
 
     # Mux out of Data Memory
-    mux_memToReg = mux(ALUOut, readData, memToReg, memToRegOut)
+    mux_memToReg = mux(ALUOut, memReadData, MemToReg, memToRegOut)
     func_Array.append(mux_memToReg)
 
     # Program counter
-    pc_inst = programCounter(clk, pc_write, pcJumpOut, pc, staller)
-    func_Array.append(pc_inst)
+    seq_programCounter = programCounter(clk, pc_write, pcJumpOut, pc, staller)
+    func_Array.append(seq_programCounter)
 
     # Sign extend
     signExtend_branch = signExtend(immediate, signExtendOut)
@@ -136,7 +138,7 @@ def testbench():
     func_Array.append(adder_branch)
 
     # And for PC
-    and_branch = andGate(branch, zero, andBranchOut)
+    and_branch = andGate(Branch, zero, andBranchOut)
     func_Array.append(and_branch)
 
     # PC incrementer
@@ -148,20 +150,20 @@ def testbench():
     func_Array.append(mux_branch)
 
     # Mux for jump PC
-    mux_jump = mux(pcMuxOut, address, jump, pcJumpOut)
+    mux_jump = mux(pcMuxOut, address, Jump, pcJumpOut)
     func_Array.append(mux_jump)
 
     # Control module
-    control_inst = control(instruction, RegDst, jump, branch, memRead, memToReg, ALUOp, memWrite, ALUSrc, regWrite)
-    func_Array.append(control_inst)
+    comb_control = control(instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite)
+    func_Array.append(comb_control)
 
     # Clock
-    clkdriver_inst = ClkDriver(clk)
-    func_Array.append(clkdriver_inst)
+    inst_clk = ClkDriver(clk)
+    func_Array.append(inst_clk)
 
     # Output
-    spaceOutput_inst = spaceOutput(clk)
-    func_Array.append(spaceOutput_inst)
+    inst_spaceOutput = spaceOutput(clk)
+    func_Array.append(inst_spaceOutput)
 
     return func_Array
 
