@@ -1,0 +1,40 @@
+
+$a0:  000 - 0
+$a1:  001 - 1
+$v0:  010 - 2
+$v1:  011 - 3
+$t0:  100 - 4
+$t1:  101 - 5
+$v2:  110 - 6
+$v3:  111 - 7
+
+
+add   - 0000(0) - 000 - R
+sub   - 0000(0) - 001 - R
+and   - 0000(0) - 010 - R
+or    - 0000(0) - 011 - R
+xor   - 0000(0) - 100 - R
+slt   - 0000(0) - 101 - R
+slti  - 0000(0) - 110 - I
+addi  - 0001(1) - XXX - I
+subi  - 0010(2) - XXX - I
+andi  - 0011(3) - XXX - I
+ori   - 0100(4) - XXX - I
+lw    - 0110(6) - XXX - I
+sw    - 0111(7) - XXX - I
+sll   - 1000(8) - XXX - I
+srl   - 1001(9) - XXX - I
+j     - 1010(A) - XXX - J
+beq   - 1011(B) - XXX - I
+
+R-Type Format
+[opcode]     [rs]    [rt]   [rd]   [func]
+[15:12]     [11:9]  [8:6]  [5:3]   [2:0]
+
+I-Type Format
+[opcode]     [rs]    [rt]   [immediate]
+[15:12]     [11:9]   [8:6]     [5:0]
+
+J-Type Format:
+[opcode] [address]
+[15:12]   [11:0]

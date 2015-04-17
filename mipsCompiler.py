@@ -213,7 +213,7 @@ def printCode(code):
     print ' ',
     print line[12:16],
     print ' ',
-    print str(lineNum) + ": ",
+    print str(lineNum*2) + ": ",
     print codeWithoutLabels[lineNum].strip(),
     print
 
@@ -229,4 +229,4 @@ def stripComments(fileName):
 
 if __name__ == '__main__':
   machineCode = compile("ProcessorAssembly")
-  # printCode(machineCode)
+  printCode(machineCode)

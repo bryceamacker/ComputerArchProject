@@ -60,6 +60,8 @@ def testbench():
     ID_EX_MemToReg = Signal(0)
     ID_EX_MemRead = Signal(0)
     ID_EX_MemWrite = Signal(0)
+    ID_EX_JUMP = Signal(0)
+    ID_EX_address = Signal(intbv(0)[16:])
     # EX_MEM
     EX_MEM_pcIncrementedImmediate = Signal(intbv(0)[16:])
     EX_MEM_zero = Signal(0)
@@ -71,6 +73,8 @@ def testbench():
     EX_MEM_MemRead = Signal(0)
     EX_MEM_MemWrite = Signal(0)
     EX_MEM_MemToReg = Signal(0)
+    EX_MEM_JUMP = Signal(0)
+    EX_MEM_address = Signal(intbv(0)[16:])
     # MEM_WB
     MEM_WB_dataMemoryReadData = Signal(intbv(0)[16:])
     MEM_WB_ALUOut = Signal(intbv(0)[16:])
@@ -93,7 +97,7 @@ def testbench():
     pc = Signal(intbv(0)[16:])
     PCAddOut = Signal(intbv(0)[16:])
     pc_write = Signal(1)
-    staller = Signal(5)
+    staller = Signal(3)
 
     # Register file signals
     regData1 = Signal(intbv(0)[16:])
@@ -137,7 +141,7 @@ def testbench():
     mux_branch = mux(PCAddOut, EX_MEM_pcIncrementedImmediate, andBranchOut, pcMuxOut)
 
     # Mux for jump PC
-    mux_jump = mux(pcMuxOut, address, Jump, pcJumpOut)
+    mux_jump = mux(pcMuxOut, EX_MEM_address, EX_MEM_JUMP, pcJumpOut)
 
     # Program counter
     seq_programCounter = programCounter(clk, pc_write, pcJumpOut, pc, staller)
@@ -166,8 +170,8 @@ def testbench():
     # signExtend_branch = signExtend(immediate, signExtendOut)
 
     ############################################ ID/EX ############################################
-    pipeline_ID_EX = ID_EX(clk, IF_ID_pcIncremented, regData1,          regData2,       rt,         rd,         immediate,          RegWrite,       Branch,         RegDst,         ALUOp,          ALUSrc,         MemToReg,       MemRead,        MemWrite,
-                                ID_EX_pcIncremented, ID_EX_regData1,    ID_EX_regData2, ID_EX_rt,   ID_EX_rd,   ID_EX_immediate,    ID_EX_RegWrite, ID_EX_Branch,   ID_EX_RegDst,   ID_EX_ALUOp,    ID_EX_ALUSrc,   ID_EX_MemToReg, ID_EX_MemRead,  ID_EX_MemWrite)
+    pipeline_ID_EX = ID_EX(clk, IF_ID_pcIncremented, regData1,          regData2,       rt,         rd,         immediate,          RegWrite,       Branch,         RegDst,         ALUOp,          ALUSrc,         MemToReg,       MemRead,        MemWrite,       Jump,       address,
+                                ID_EX_pcIncremented, ID_EX_regData1,    ID_EX_regData2, ID_EX_rt,   ID_EX_rd,   ID_EX_immediate,    ID_EX_RegWrite, ID_EX_Branch,   ID_EX_RegDst,   ID_EX_ALUOp,    ID_EX_ALUSrc,   ID_EX_MemToReg, ID_EX_MemRead,  ID_EX_MemWrite, ID_EX_JUMP, ID_EX_address)
     ############################################ ID/EX ############################################
 
     # Mux in to write register
@@ -183,8 +187,8 @@ def testbench():
     adder_branch = adder(ID_EX_pcIncremented, ID_EX_immediate, PCBranchAddOut)
 
     ############################################ EX/MEM ############################################
-    pipeline_EX_MEM = EX_MEM(clk,   PCBranchAddOut,                 zero,           ALUOut,         ID_EX_regData2,     RegDstOut,          ID_EX_RegWrite,     ID_EX_Branch,   ID_EX_MemRead,  ID_EX_MemWrite,     ID_EX_MemToReg,
-                                    EX_MEM_pcIncrementedImmediate,  EX_MEM_zero,    EX_MEM_ALUOut,  EX_MEM_regData2,    EX_MEM_RegDstOut,   EX_MEM_RegWrite,    EX_MEM_Branch,  EX_MEM_MemRead, EX_MEM_MemWrite,    EX_MEM_MemToReg)
+    pipeline_EX_MEM = EX_MEM(clk,   PCBranchAddOut,                 zero,           ALUOut,         ID_EX_regData2,     RegDstOut,          ID_EX_RegWrite,     ID_EX_Branch,   ID_EX_MemRead,  ID_EX_MemWrite,     ID_EX_MemToReg,  ID_EX_JUMP,     ID_EX_address,
+                                    EX_MEM_pcIncrementedImmediate,  EX_MEM_zero,    EX_MEM_ALUOut,  EX_MEM_regData2,    EX_MEM_RegDstOut,   EX_MEM_RegWrite,    EX_MEM_Branch,  EX_MEM_MemRead, EX_MEM_MemWrite,    EX_MEM_MemToReg, EX_MEM_JUMP,   EX_MEM_address)
     ############################################ EX/MEM ############################################
 
     # Data memory
@@ -192,7 +196,6 @@ def testbench():
 
     # And for PC
     and_branch = andGate(EX_MEM_Branch, EX_MEM_zero, andBranchOut)
-
 
     ############################################ MEM/WB ############################################
     pipeline_MEM_WB = MEM_WB(clk,   memReadData,                EX_MEM_ALUOut,  EX_MEM_RegDstOut,   EX_MEM_RegWrite,    EX_MEM_MemToReg,

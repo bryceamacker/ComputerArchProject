@@ -17,8 +17,8 @@ def IF_ID(clk,  pcIncrementedIn,    instructionIn,
 
     return IF_IDLogic
 
-def ID_EX(clk,  pcIncrementedIn,    regData1In,     regData2In,     rtIn,   rdIn,   immediateIn,    RegWriteIn,     BranchIn,   RegDstIn,   ALUOpIn,    ALUSrcIn,   MemToRegIn,     MemReadIn,  MemWriteIn,
-                pcIncrementedOut,   regData1Out,    regData2Out,    rtOut,  rdOut,  immediateOut,   RegWriteOut,    BranchOut,  RegDstOut,  ALUOpOut,   ALUSrcOut,  MemToRegOut,    MemReadOut, MemWriteOut):
+def ID_EX(clk,  pcIncrementedIn,    regData1In,     regData2In,     rtIn,   rdIn,   immediateIn,    RegWriteIn,     BranchIn,   RegDstIn,   ALUOpIn,    ALUSrcIn,   MemToRegIn,     MemReadIn,  MemWriteIn,     JumpIn,     JumpAddressIn,
+                pcIncrementedOut,   regData1Out,    regData2Out,    rtOut,  rdOut,  immediateOut,   RegWriteOut,    BranchOut,  RegDstOut,  ALUOpOut,   ALUSrcOut,  MemToRegOut,    MemReadOut, MemWriteOut,    JumpOut,    JumpAddressOut):
     """
     clk -- input, clock line
     pcIncrementedIn -- input, pc after increment
@@ -61,11 +61,13 @@ def ID_EX(clk,  pcIncrementedIn,    regData1In,     regData2In,     rtIn,   rdIn
         MemToRegOut.next = MemToRegIn
         MemReadOut.next = MemReadIn
         MemWriteOut.next = MemWriteIn
+        JumpOut.next = JumpIn
+        JumpAddressOut.next = JumpAddressIn
 
     return ID_EXLogic
 
-def EX_MEM(clk, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2In,     regDstOutIn,    RegWriteIn,     BranchIn,   MemReadIn,  MemWriteIn,     MemToRegIn,
-                pcIncrementedImmediateOut,  zeroOut,    ALUResultOut,   regData2Out,    regDstOutOut,   RegWriteOut,    BranchOut,  MemReadOut, MemWriteOut,    MemToRegOut):
+def EX_MEM(clk, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2In,     regDstOutIn,    RegWriteIn,     BranchIn,   MemReadIn,  MemWriteIn,     MemToRegIn,     JumpIn,     JumpAddrIn,
+                pcIncrementedImmediateOut,  zeroOut,    ALUResultOut,   regData2Out,    regDstOutOut,   RegWriteOut,    BranchOut,  MemReadOut, MemWriteOut,    MemToRegOut,    JumpOut,    JumpAddrOut):
     """
     clk -- input, clock input
     pcIncrementedIn -- input, pc incremented and added with immediate
@@ -100,6 +102,8 @@ def EX_MEM(clk, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2
         MemReadOut.next = MemReadIn
         MemWriteOut.next = MemWriteIn
         MemToRegOut.next = MemToRegIn
+        JumpOut.next = JumpIn
+        JumpAddrOut.next = JumpAddrIn
 
     return EX_MEMLogic
 
