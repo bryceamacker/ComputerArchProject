@@ -34,8 +34,8 @@ def spaceOutput(clk):
 
     @always(clk.negedge)
     def spaceOutputLogic():
-        print("")
-
+        # print("")
+        pass
     return spaceOutputLogic
 
 def testbench():
@@ -57,22 +57,26 @@ def testbench():
     ID_EX_RegDst = Signal(0)
     ID_EX_ALUOp = Signal(intbv(0)[4:])
     ID_EX_ALUSrc = Signal(0)
+    ID_EX_MemToReg = Signal(0)
+    ID_EX_MemRead = Signal(0)
+    ID_EX_MemWrite = Signal(0)
     # EX_MEM
     EX_MEM_pcIncrementedImmediate = Signal(intbv(0)[16:])
     EX_MEM_zero = Signal(0)
-    EX_MEM_ALUResult = Signal(intbv(0)[16:])
+    EX_MEM_ALUOut = Signal(intbv(0)[16:])
     EX_MEM_regData2= Signal(intbv(0)[16:])
     EX_MEM_RegDstOut = Signal(0)
     EX_MEM_RegWrite = Signal(0)
     EX_MEM_Branch = Signal(0)
-    EX_MEM_MemReadOut = Signal(0)
-    EX_MEM_MemWriteOut = Signal(0)
+    EX_MEM_MemRead = Signal(0)
+    EX_MEM_MemWrite = Signal(0)
+    EX_MEM_MemToReg = Signal(0)
     # MEM_WB
     MEM_WB_dataMemoryReadData = Signal(intbv(0)[16:])
-    MEM_WB_ALUResult = Signal(intbv(0)[16:])
-    MEM_WB_RegDst = Signal(0)
+    MEM_WB_ALUOut = Signal(intbv(0)[16:])
+    MEM_WB_RegDstOut = Signal(0)
     MEM_WB_RegWrite = Signal(0)
-    MEM_WB_MemtoReg = Signal(0)
+    MEM_WB_MemToReg = Signal(0)
 
     # Control lines
     RegDst = Signal(0)
@@ -89,17 +93,17 @@ def testbench():
     pc = Signal(intbv(0)[16:])
     PCAddOut = Signal(intbv(0)[16:])
     pc_write = Signal(1)
-    staller = Signal(0)
+    staller = Signal(5)
 
     # Register file signals
-    regData1 = Signal(intbv(init_instruction)[16:])
-    regData2 = Signal(intbv(init_instruction)[16:])
+    regData1 = Signal(intbv(0)[16:])
+    regData2 = Signal(intbv(0)[16:])
 
     # Memory out line
-    memReadData = Signal(intbv(init_instruction)[16:])
+    memReadData = Signal(intbv(0)[16:])
 
     # ALU Signals
-    ALUOut = Signal(intbv(init_instruction)[16:])
+    ALUOut = Signal(intbv(0)[16:])
     zero = Signal(0)
 
     # Mux outs signals
@@ -115,76 +119,93 @@ def testbench():
     andBranchOut = Signal(0)
 
     # Decoded instruction signals
-    opcode = Signal(intbv(init_instruction)[4:])
-    rs = Signal(intbv(init_instruction)[3:])
-    rt = Signal(intbv(init_instruction)[3:])
-    rd = Signal(intbv(init_instruction)[3:])
-    func = Signal(intbv(init_instruction)[3:])
-    immediate = Signal(intbv(init_instruction)[6:])
-    address = Signal(intbv(init_instruction)[12:])
+    opcode = Signal(intbv()[4:])
+    rs = Signal(intbv(0)[3:])
+    rt = Signal(intbv(0)[3:])
+    rd = Signal(intbv(0)[3:])
+    func = Signal(intbv(0)[3:])
+    immediate = Signal(intbv(0)[6:])
+    address = Signal(intbv(0)[12:])
 
     # Creates an instruction signal 16 bits wide, init to 0xFFFF
-    instruction = Signal(intbv(init_instruction)[16:])
+    instruction = Signal(intbv(32768)[16:])
 
-    # Pipelines
-    pipeline_IF_ID = IF_ID(clk, PCAddOut, instruction, IF_ID_pcIncremented, IF_ID_instruction)
-    pipeline_ID_EX = ID_EX(clk, IF_ID_pcIncremented, regData1, regData2, rt, rd, immediate, RegWrite, Branch, RegDst, ALUOp, ALUSrc, ID_EX_pcIncremented, ID_EX_regData1, ID_EX_regData2, ID_EX_rt, ID_EX_rd, ID_EX_immediate, ID_EX_RegWrite, ID_EX_Branch, ID_EX_RegDst, ID_EX_ALUOp, ID_EX_ALUSrc)
-    pipeline_EX_MEM = EX_MEM(clk, PCBranchAddOut, zero, ALUOut, regData2, RegDstOut, RegWrite, Branch, MemRead, MemWrite, EX_MEM_pcIncrementedImmediate, EX_MEM_zero, EX_MEM_ALUResult, EX_MEM_regData2, EX_MEM_RegDstOut, EX_MEM_RegWrite, EX_MEM_Branch, EX_MEM_MemReadOut, EX_MEM_MemWriteOut)
-    pipeline_MEM_WB = MEM_WB(clk, memReadData, EX_MEM_ALUResult, EX_MEM_RegDstOut, RegWrite, MemToReg, MEM_WB_dataMemoryReadData, MEM_WB_ALUResult, MEM_WB_RegDst, MEM_WB_RegWrite, MEM_WB_MemtoReg)
 
-    # Instruction memory
-    seq_instructionMemory = instructionMemory(clk, pc, instruction, programMemory, staller)
-
-    # Instruction decoder
-    comb_instructionDecode = instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address)
-
-    # Mux in to write register
-    mux_regDest = mux(rt, rd, RegDst, RegDstOut)
-
-    # Register file
-    seq_registerFile = registers(clk, rs, rt, RegDstOut, memToRegOut, RegWrite, regData1, regData2)
-
-    # Mux in to ALU
-    mux_ALUSrc = mux(regData2, signExtendOut, ALUSrc, ALUSrcOut)
-
-    # ALU
-    comb_ALU = alu(clk, ALUOp, func, regData1, ALUSrcOut, ALUOut, zero)
-
-    # Data memory
-    seq_dataMemory = dataMemory(clk, ALUOut, regData2, memReadData, MemRead, MemWrite)
-
-    # Mux out of Data Memory
-    mux_memToReg = mux(ALUOut, memReadData, MemToReg, memToRegOut)
-
-    # Program counter
-    seq_programCounter = programCounter(clk, pc_write, pcJumpOut, pc, staller)
-
-    # Sign extend
-    signExtend_branch = signExtend(immediate, signExtendOut)
-
-    # Branch adder
-    adder_branch = adder(PCAddOut, signExtendOut, PCBranchAddOut)
-
-    # And for PC
-    and_branch = andGate(Branch, zero, andBranchOut)
-
-    # PC incrementer
-    adder_PCIncrementer = adder(pc, Signal(intbv(2)), PCAddOut)
+    ############################################ PROCESSOR ############################################
 
     # Mux for branch PC
-    mux_branch = mux(PCAddOut, PCBranchAddOut, andBranchOut, pcMuxOut)
+    mux_branch = mux(PCAddOut, EX_MEM_pcIncrementedImmediate, andBranchOut, pcMuxOut)
 
     # Mux for jump PC
     mux_jump = mux(pcMuxOut, address, Jump, pcJumpOut)
 
+    # Program counter
+    seq_programCounter = programCounter(clk, pc_write, pcJumpOut, pc, staller)
+
+    # PC incrementer
+    adder_PCIncrementer = adder(pc, Signal(intbv(2)), PCAddOut)
+
+    # Instruction memory
+    seq_instructionMemory = instructionMemory(clk, pc, instruction, programMemory, staller)
+
+    ############################################ IF/ID ############################################
+    pipeline_IF_ID = IF_ID(clk, PCAddOut,               instruction,
+                                IF_ID_pcIncremented,    IF_ID_instruction)
+    ############################################ IF/ID ############################################
+
+    # Instruction decoder
+    comb_instructionDecode = instructionDecode(IF_ID_instruction, opcode, rs, rt, rd, func, immediate, address)
+
     # Control module
-    comb_control = control(instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite)
+    comb_control = control(IF_ID_instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite)
+
+    # Register file
+    seq_registerFile = registers(clk, rs, rt, MEM_WB_RegDstOut, memToRegOut, MEM_WB_RegWrite, regData1, regData2)
+
+    # Sign extend
+    # signExtend_branch = signExtend(immediate, signExtendOut)
+
+    ############################################ ID/EX ############################################
+    pipeline_ID_EX = ID_EX(clk, IF_ID_pcIncremented, regData1,          regData2,       rt,         rd,         immediate,          RegWrite,       Branch,         RegDst,         ALUOp,          ALUSrc,         MemToReg,       MemRead,        MemWrite,
+                                ID_EX_pcIncremented, ID_EX_regData1,    ID_EX_regData2, ID_EX_rt,   ID_EX_rd,   ID_EX_immediate,    ID_EX_RegWrite, ID_EX_Branch,   ID_EX_RegDst,   ID_EX_ALUOp,    ID_EX_ALUSrc,   ID_EX_MemToReg, ID_EX_MemRead,  ID_EX_MemWrite)
+    ############################################ ID/EX ############################################
+
+    # Mux in to write register
+    mux_regDest = mux(ID_EX_rt, ID_EX_rd, ID_EX_RegDst, RegDstOut)
+
+    # ALU Src mux
+    mux_ALUSrc = mux(ID_EX_regData2, ID_EX_immediate, ID_EX_ALUSrc, ALUSrcOut)
+
+    # ALU
+    comb_ALU = alu(clk, ID_EX_ALUOp, ID_EX_regData1, ALUSrcOut, ALUOut, zero)
+
+    # Branch adder
+    adder_branch = adder(ID_EX_pcIncremented, ID_EX_immediate, PCBranchAddOut)
+
+    ############################################ EX/MEM ############################################
+    pipeline_EX_MEM = EX_MEM(clk,   PCBranchAddOut,                 zero,           ALUOut,         ID_EX_regData2,     RegDstOut,          ID_EX_RegWrite,     ID_EX_Branch,   ID_EX_MemRead,  ID_EX_MemWrite,     ID_EX_MemToReg,
+                                    EX_MEM_pcIncrementedImmediate,  EX_MEM_zero,    EX_MEM_ALUOut,  EX_MEM_regData2,    EX_MEM_RegDstOut,   EX_MEM_RegWrite,    EX_MEM_Branch,  EX_MEM_MemRead, EX_MEM_MemWrite,    EX_MEM_MemToReg)
+    ############################################ EX/MEM ############################################
+
+    # Data memory
+    seq_dataMemory = dataMemory(clk, EX_MEM_ALUOut, EX_MEM_regData2, memReadData, EX_MEM_MemRead, EX_MEM_MemWrite)
+
+    # And for PC
+    and_branch = andGate(EX_MEM_Branch, EX_MEM_zero, andBranchOut)
+
+
+    ############################################ MEM/WB ############################################
+    pipeline_MEM_WB = MEM_WB(clk,   memReadData,                EX_MEM_ALUOut,  EX_MEM_RegDstOut,   EX_MEM_RegWrite,    EX_MEM_MemToReg,
+                                    MEM_WB_dataMemoryReadData,  MEM_WB_ALUOut,  MEM_WB_RegDstOut,   MEM_WB_RegWrite,    MEM_WB_MemToReg)
+    ############################################ MEM/WB ############################################
+
+    # Mux out of Data Memory
+    mux_memToReg = mux(MEM_WB_ALUOut, MEM_WB_dataMemoryReadData, MEM_WB_MemToReg, memToRegOut)
+
+    ############################################ PROCESSOR ############################################
 
     # Clock
     inst_clk = ClkDriver(clk)
-
-    # Output
-    inst_spaceOutput = spaceOutput(clk)
 
     return instances()
 

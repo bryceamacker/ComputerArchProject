@@ -13,10 +13,10 @@ def programCounter(clk, pc_write, pcIn, pc, staller):
     # rising clock edge from the clk signal
     @always(clk.posedge)
     def incLogic():
-        if pc_write and (staller.val == 5):
+        if pc_write and (staller.val == 0):
             pc.next = pcIn
-            # staller.next = 0
-        # else:
-            # staller.next = staller + 1
+            staller.next = 3
+        else:
+            staller.next = staller - 1
 
     return incLogic

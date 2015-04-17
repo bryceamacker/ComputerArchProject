@@ -1,7 +1,7 @@
 from myhdl import *
 from memoryDictionaries import *
 
-def registers(clk, read1, read2, write, wd, regWrite, data1, data2):
+def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
     """ Stores all instructions and outputs appropriate signals after decoding them
     clk         -- clock input
     read1       -- input (read reg2)
@@ -20,9 +20,9 @@ def registers(clk, read1, read2, write, wd, regWrite, data1, data2):
         data1.next = int(registers_mem[int(read1)], 2)
         data2.next = int(registers_mem[int(read2)], 2)
 
-        if regWrite:
-            registers_mem[int(write.val)] = bin(wd, 16)
-            # print "New " + str(write.val) + ": " + str(wd)
+        if writeSig:
+            registers_mem[int(writeReg.val)] = bin(writeData, 16)
+            # print "New " + str(registers_dict[bin(writeReg.val, 3)]) + ": " + str(writeData)
 
 
     return registersLogic
