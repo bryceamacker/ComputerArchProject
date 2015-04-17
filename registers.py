@@ -15,7 +15,7 @@ def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
 
     # This basically means this function will run every time there is a
     # rising clock edge from the clk signal
-    @always(clk.posedge)
+    @always_comb
     def registersLogic():
         data1.next = int(registers_mem[int(read1)], 2)
         data2.next = int(registers_mem[int(read2)], 2)
@@ -26,3 +26,9 @@ def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
 
 
     return registersLogic
+
+def printRegisters():
+    print "Register File:"
+    for register in registers_mem:
+        print str(registers_dict[bin(register, 3)]) + ": " + hex(int(registers_mem[register]))
+    print

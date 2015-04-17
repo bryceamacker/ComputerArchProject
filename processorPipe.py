@@ -67,7 +67,7 @@ def testbench():
     EX_MEM_zero = Signal(0)
     EX_MEM_ALUOut = Signal(intbv(0)[16:])
     EX_MEM_regData2= Signal(intbv(0)[16:])
-    EX_MEM_RegDstOut = Signal(0)
+    EX_MEM_RegDstOut = Signal(intbv(0)[3:])
     EX_MEM_RegWrite = Signal(0)
     EX_MEM_Branch = Signal(0)
     EX_MEM_MemRead = Signal(0)
@@ -78,7 +78,7 @@ def testbench():
     # MEM_WB
     MEM_WB_dataMemoryReadData = Signal(intbv(0)[16:])
     MEM_WB_ALUOut = Signal(intbv(0)[16:])
-    MEM_WB_RegDstOut = Signal(0)
+    MEM_WB_RegDstOut = Signal(intbv(0)[3:])
     MEM_WB_RegWrite = Signal(0)
     MEM_WB_MemToReg = Signal(0)
 
@@ -217,4 +217,6 @@ if __name__ == '__main__':
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
     # sim.run(2 * clockCycles + 1)
-    sim.run(124*2*5)
+    sim.run((124*2*5*2) + 10)
+    printRegisters()
+    printEndDataMemory()

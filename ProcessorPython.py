@@ -252,7 +252,7 @@ print ("Mem[a0 + 4]: " + hex(Mem[a0 + 4]))
 print ("Mem[a0 + 6]: " + hex(Mem[a0 + 6]))
 print ("Mem[a0 + 8]: " + hex(Mem[a0 + 8]))
 
-print
-print ("Executed lines:")
-for instructionNum, instruction in enumerate(executedCode):
-    print str(instructionNum) + ": " + instruction
+# print
+# print ("Executed lines:")
+# for instructionNum, instruction in enumerate(executedCode):
+#     print str(instructionNum) + ": " + instruction

@@ -26,3 +26,12 @@ def dataMemory(clk, address, writeData, readData, memRead, memWrite):
             memory[address] = writeData
 
     return dataMemoryLogic
+
+def printEndDataMemory():
+    print "Data Memory:"
+    print "a0: " + hex(memory[a0])
+    print "a0 + 2: " + hex(memory[a0 + 2])
+    print "a0 + 4: " + hex(memory[a0 + 4])
+    print "a0 + 6: " + hex(memory[a0 + 6])
+    print "a0 + 8: " + hex(memory[a0 + 8])
+    print

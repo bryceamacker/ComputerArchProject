@@ -56,13 +56,13 @@ def shiftLeft(in1, shamt, out):
 
     return shiftLeftLogic
 
-def signExtend(in1, out):
+def signExtend(clk, in1, out):
     """
     in1 -- input, input
     out -- output, output
     """
 
-    @always_comb
+    @always(clk.posedge)
     def signExtendLogic():
         out.next = in1
 
