@@ -22,13 +22,11 @@ def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
 
         if writeSig:
             registers_mem[int(writeReg.val)] = bin(writeData, 16)
-            # printRegisters()
-
 
     return registersLogic
 
 def printRegisters():
     print "Register File:"
     for register in registers_mem:
-        print str(registers_dict[bin(register, 3)]) + ": " + hex(int(registers_mem[register]))
+        print str(registers_dict[bin(register, 3)]) + ": " + hex(int(registers_mem[register], 2))
     print
