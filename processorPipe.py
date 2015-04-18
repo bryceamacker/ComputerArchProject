@@ -45,6 +45,7 @@ def testbench():
     # IF_ID
     IF_ID_pcIncremented = Signal(intbv(0)[16:])
     IF_ID_instruction = Signal(intbv(0)[16:])
+    IF_ID_stall = Signal(0)
     # ID_EX
     ID_EX_pcIncremented = Signal(intbv(0)[16:])
     ID_EX_regData1 = Signal(intbv(0)[16:])
@@ -98,6 +99,7 @@ def testbench():
     PCAddOut = Signal(intbv(0)[16:])
     pc_write = Signal(1)
     staller = Signal(3)
+    stall = Signal(0)
 
     # Register file signals
     regData1 = Signal(intbv(0)[16:])
@@ -144,7 +146,7 @@ def testbench():
     mux_jump = mux(pcMuxOut, EX_MEM_address, EX_MEM_JUMP, pcJumpOut)
 
     # Program counter
-    seq_programCounter = programCounter(clk, pc_write, pcJumpOut, pc, staller)
+    seq_programCounter = programCounter(clk, pc_write, pcJumpOut, pc, staller, stall)
 
     # PC incrementer
     adder_PCIncrementer = adder(pc, Signal(intbv(2)), PCAddOut)
@@ -153,15 +155,15 @@ def testbench():
     seq_instructionMemory = instructionMemory(clk, pc, instruction, programMemory, staller)
 
     ############################################ IF/ID ############################################
-    pipeline_IF_ID = IF_ID(clk, PCAddOut,               instruction,
-                                IF_ID_pcIncremented,    IF_ID_instruction)
+    pipeline_IF_ID = IF_ID(clk, PCAddOut,               instruction,        stall,
+                                IF_ID_pcIncremented,    IF_ID_instruction,  IF_ID_stall)
     ############################################ IF/ID ############################################
 
     # Instruction decoder
     comb_instructionDecode = instructionDecode(IF_ID_instruction, opcode, rs, rt, rd, func, immediate, address)
 
     # Control module
-    comb_control = control(IF_ID_instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite)
+    comb_control = control(IF_ID_instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, IF_ID_stall)
 
     # Register file
     seq_registerFile = registers(clk, rs, rt, MEM_WB_RegDstOut, memToRegOut, MEM_WB_RegWrite, regData1, regData2)
@@ -219,4 +221,4 @@ if __name__ == '__main__':
     # sim.run(2 * clockCycles + 1)
     sim.run((124*2*5*2) + 10)
     printRegisters()
-    printEndDataMemory()
+    printDataMemory()

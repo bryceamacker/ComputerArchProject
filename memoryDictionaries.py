@@ -19,6 +19,15 @@ logical_or = 3
 xor = 4
 slt = 5
 
+memory=[i for i in range(26)]
+a0 = 16
+memory[a0] =     int("0101", 16)
+memory[a0 + 2] = int("0110", 16)
+memory[a0 + 4] = int("0011", 16)
+memory[a0 + 6] = int("00F0", 16)
+memory[a0 + 8] = int("00FF", 16)
+
+
 func_dict = {'000': 'add',
          '001': 'sub',
          '010': 'and',

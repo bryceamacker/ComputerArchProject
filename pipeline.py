@@ -1,7 +1,7 @@
 from myhdl import *
 
-def IF_ID(clk,  pcIncrementedIn,    instructionIn,
-                pcIncrementedOut,   instructionOut):
+def IF_ID(clk,  pcIncrementedIn,    instructionIn,  stallIn,
+                pcIncrementedOut,   instructionOut, stallOut):
     """
     clk -- input, clock line
     pcIncrementedIn -- input, pc after increment
@@ -14,6 +14,7 @@ def IF_ID(clk,  pcIncrementedIn,    instructionIn,
     def IF_IDLogic():
         pcIncrementedOut.next = pcIncrementedIn
         instructionOut.next = instructionIn
+        stallOut.next = stallIn
 
     return IF_IDLogic
 

@@ -43,18 +43,20 @@ def alu(clk, ALUOp, ALUIn1, ALUIn2, ALUOut, zero):
         else:
             ALUOutVal = 0
 
-        #### This shouldn't be here
-        if ALUOutVal >= 65536:
-            ALUOutVal = 65535
-        elif ALUOutVal < 0:
-            ALUOutVal = 0
-        #### This shouldn't be here
-
-        ALUOut.next = ALUOutVal
-
         if ALUOutVal == 0:
             zero.next = 1
         else:
             zero.next = 0
+
+
+        #### This shouldn't be here
+        if ALUOutVal >= 65536:
+            ALUOutVal = 65535
+        elif ALUOutVal < 0:
+            ALUOutVal = 1
+        #### This shouldn't be here
+
+        temp = intbv(ALUOutVal)
+        ALUOut.next = temp.signed()
 
     return aluLogic

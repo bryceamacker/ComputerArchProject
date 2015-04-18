@@ -1,12 +1,6 @@
 from myhdl import *
-
-memory=[i for i in range(65536)]
-a0 = 16
-memory[a0] =     int("0101", 16)
-memory[a0 + 2] = int("0110", 16)
-memory[a0 + 4] = int("0011", 16)
-memory[a0 + 6] = int("00F0", 16)
-memory[a0 + 8] = int("00FF", 16)
+from memoryDictionaries import *
+from copy import *
 
 def dataMemory(clk, address, writeData, readData, memRead, memWrite):
     """
@@ -18,20 +12,20 @@ def dataMemory(clk, address, writeData, readData, memRead, memWrite):
     memWrite    -- input, whether or not to write
     """
 
-    @always(clk.posedge)
+    @always_comb
     def dataMemoryLogic():
         if(memRead == 1):
-            readData = memory[address]
+            readData.next = memory[address]
         elif(memWrite == 1):
-            memory[address] = writeData
+            memory[address] = copy(writeData.val)
 
     return dataMemoryLogic
 
-def printEndDataMemory():
+def printDataMemory():
     print "Data Memory:"
-    print "a0: " + hex(memory[a0])
-    print "a0 + 2: " + hex(memory[a0 + 2])
-    print "a0 + 4: " + hex(memory[a0 + 4])
-    print "a0 + 6: " + hex(memory[a0 + 6])
-    print "a0 + 8: " + hex(memory[a0 + 8])
+    print "    a0: " + "{0:#0{1}x}".format(int(memory[a0]), 6)
+    print "a0 + 2: " + "{0:#0{1}x}".format(int(memory[a0 + 2]), 6)
+    print "a0 + 4: " + "{0:#0{1}x}".format(int(memory[a0 + 4]), 6)
+    print "a0 + 6: " + "{0:#0{1}x}".format(int(memory[a0 + 6]), 6)
+    print "a0 + 8: " + "{0:#0{1}x}".format(int(memory[a0 + 8]), 6)
     print
