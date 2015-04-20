@@ -1,4 +1,5 @@
 from myhdl import *
+from memoryDictionaries import *
 
 def IF_ID(clk,  pcIncrementedIn,    instructionIn,  stallIn,
                 pcIncrementedOut,   instructionOut, stallOut):
@@ -16,10 +17,35 @@ def IF_ID(clk,  pcIncrementedIn,    instructionIn,  stallIn,
         instructionOut.next = instructionIn
         stallOut.next = stallIn
 
+        if not stallIn:
+            print "################################################"
+            print
+            print
+            print "################################################"
+
+            opcode = instructionIn[:12]
+            # print("Opcode: %s" % (bin(opcode, 4)))
+            if opcode == r_type:
+                func = bin(instructionIn[3:0], 3)
+                rd = bin(instructionIn[6:3], 3)
+                rt = bin(instructionIn[9:6], 3)
+                rs = bin(instructionIn[12:9], 3)
+                print("%s %s %s %s" % (func_dict[func], registers_dict[rd], registers_dict[rs], registers_dict[rt]))
+
+            elif opcode == jump:
+                address = bin(instructionIn[12:], 12)
+                print("%s %s" % (opcode_dict[bin(opcode, 4)], address))
+
+            else:
+                imm = bin(instructionIn[6:], 6)
+                rt = bin(instructionIn[9:6], 3)
+                rs = bin(instructionIn[12:9], 3)
+                print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rt], registers_dict[rs], imm))
+
     return IF_IDLogic
 
-def ID_EX(clk,  pcIncrementedIn,    regData1In,     regData2In,     rtIn,   rdIn,   immediateIn,    RegWriteIn,     BranchIn,   RegDstIn,   ALUOpIn,    ALUSrcIn,   MemToRegIn,     MemReadIn,  MemWriteIn,     JumpIn,     JumpAddressIn,
-                pcIncrementedOut,   regData1Out,    regData2Out,    rtOut,  rdOut,  immediateOut,   RegWriteOut,    BranchOut,  RegDstOut,  ALUOpOut,   ALUSrcOut,  MemToRegOut,    MemReadOut, MemWriteOut,    JumpOut,    JumpAddressOut):
+def ID_EX(clk,  pcIncrementedIn,    regData1In,     regData2In,     rtIn,   rdIn,   immediateIn,    RegWriteIn,     BranchIn,   RegDstIn,   ALUOpIn,    ALUSrcIn,   MemToRegIn,     MemReadIn,  MemWriteIn,     JumpIn,     JumpAddressIn,  stallIn,
+                pcIncrementedOut,   regData1Out,    regData2Out,    rtOut,  rdOut,  immediateOut,   RegWriteOut,    BranchOut,  RegDstOut,  ALUOpOut,   ALUSrcOut,  MemToRegOut,    MemReadOut, MemWriteOut,    JumpOut,    JumpAddressOut, stallOut):
     """
     clk -- input, clock line
     pcIncrementedIn -- input, pc after increment
@@ -64,11 +90,12 @@ def ID_EX(clk,  pcIncrementedIn,    regData1In,     regData2In,     rtIn,   rdIn
         MemWriteOut.next = MemWriteIn
         JumpOut.next = JumpIn
         JumpAddressOut.next = JumpAddressIn
+        stallOut.next = stallIn
 
     return ID_EXLogic
 
-def EX_MEM(clk, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2In,     regDstOutIn,    RegWriteIn,     BranchIn,   MemReadIn,  MemWriteIn,     MemToRegIn,     JumpIn,     JumpAddrIn,
-                pcIncrementedImmediateOut,  zeroOut,    ALUResultOut,   regData2Out,    regDstOutOut,   RegWriteOut,    BranchOut,  MemReadOut, MemWriteOut,    MemToRegOut,    JumpOut,    JumpAddrOut):
+def EX_MEM(clk, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2In,     regDstOutIn,    RegWriteIn,     BranchIn,   MemReadIn,  MemWriteIn,     MemToRegIn,     JumpIn,     JumpAddrIn,     stallIn,
+                pcIncrementedImmediateOut,  zeroOut,    ALUResultOut,   regData2Out,    regDstOutOut,   RegWriteOut,    BranchOut,  MemReadOut, MemWriteOut,    MemToRegOut,    JumpOut,    JumpAddrOut,    stallOut):
     """
     clk -- input, clock input
     pcIncrementedIn -- input, pc incremented and added with immediate
@@ -105,11 +132,12 @@ def EX_MEM(clk, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2
         MemToRegOut.next = MemToRegIn
         JumpOut.next = JumpIn
         JumpAddrOut.next = JumpAddrIn
+        stallOut.next = stallIn
 
     return EX_MEMLogic
 
-def MEM_WB(clk, dataMemoryReadDataIn,   ALUResultIn,    regDstOutIn,    RegWriteIn,     MemToRegIn,
-                dataMemoryReadDataOut,  ALUResultOut,   regDstOutOut,   RegWriteOut,    MemToRegOut):
+def MEM_WB(clk, dataMemoryReadDataIn,   ALUResultIn,    regDstOutIn,    RegWriteIn,     MemToRegIn,     stallIn,
+                dataMemoryReadDataOut,  ALUResultOut,   regDstOutOut,   RegWriteOut,    MemToRegOut,    stallOut):
     """
     clk -- input, clock input
     dataMemoryReadDataIn -- input, data from memory read
@@ -131,5 +159,10 @@ def MEM_WB(clk, dataMemoryReadDataIn,   ALUResultIn,    regDstOutIn,    RegWrite
         regDstOutOut.next = regDstOutIn
         RegWriteOut.next = RegWriteIn
         MemToRegOut.next = MemToRegIn
+        stallOut.next = stallIn
+
+        # if not stallIn:
+            # print "################################################"
+            # print
 
     return MEM_WBLogic

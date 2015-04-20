@@ -18,6 +18,7 @@ def dataMemory(clk, address, writeData, readData, memRead, memWrite):
             readData.next = memory[address]
         elif(memWrite == 1):
             memory[address] = copy(writeData.val)
+            print "New Mem[" + str(address) + "]: " + "{0:#0{1}x}".format(int(writeData), 6)
 
     return dataMemoryLogic
 
