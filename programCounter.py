@@ -1,6 +1,6 @@
 from myhdl import always
 
-def programCounter(clk, pc_write, pcIn, pc, staller, stall):
+def programCounter(clk, pcIn, pc, pcWrite, stall, reset):
     """ Incrementer with enable.
     clk         -- input, clock line
     pc_write    -- input, whether or not to take the input
@@ -13,12 +13,8 @@ def programCounter(clk, pc_write, pcIn, pc, staller, stall):
     # rising clock edge from the clk signal
     @always(clk.posedge)
     def incLogic():
-        if pc_write and (staller.val == 0):
+        if (stall.val == 0) and (pcWrite == 1):
             pc.next = pcIn
-            staller.next = 3
-            stall.next = 0
-        else:
-            staller.next = staller - 1
-            stall.next = 1
+            reset.next = 0
 
     return incLogic

@@ -31,3 +31,18 @@ def printRegisters():
     for register in registers_mem:
         print str(registers_dict[bin(register, 3)]) + ": " + "{0:#0{1}x}".format(int(registers_mem[register], 2), 6) #hex(int(registers_mem[register], 2))
     print
+
+def checkRegisters():
+    incorrectRegisters = []
+    expectedValues = ["0x1a", "0x0", "0x1", "0x1019", "0x0", "0x0", "0x3c0", "0x3fc"]
+
+    for regNum in range(0, 7):
+        if hex(int(registers_mem[regNum], 2)) != expectedValues[regNum]:
+            incorrectRegisters.append(regNum)
+
+    if len(incorrectRegisters) == 0:
+        print "Registers all good"
+
+    else:
+        for register in incorrectRegisters:
+            print "Register " + registers_dict[bin(register, 3)] + " had value " + hex(int(registers_mem[register], 2)) + " expected " + expectedValues[register]

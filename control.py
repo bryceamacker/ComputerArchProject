@@ -2,7 +2,7 @@ from myhdl import *
 from alu import *
 from memoryDictionaries import *
 
-def control(instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, stall):
+def control(instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, stall, controlEnable):
     """
     instruction -- input, current instruction
     RegDst      -- output, mux input
@@ -153,7 +153,7 @@ def control(instruction, RegDst, Jump, Branch, MemRead, MemToReg, ALUOp, MemWrit
             RegWrite.next = 0
             Jump.next = 0
 
-        if stall:
+        if stall or controlEnable == 0:
             ALUOp.next = 0
             ALUSrc.next = 0
             Branch.next = 0

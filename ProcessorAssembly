@@ -33,7 +33,6 @@ WHILE:
   andi $t0, $t0, 0x0
   slt $t1, $t0, $a1
   beq $t0, $t1, ENDLOOP
-  j CONTINUE_LOOP
   CONTINUE_LOOP:
   # $a1 = $a1 - 1
   subi $a1, $a1, 1

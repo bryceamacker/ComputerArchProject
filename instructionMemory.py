@@ -1,36 +1,33 @@
 from myhdl import *
 from memoryDictionaries import *
+from mipsCompiler import *
 
+pa = compile('ProcessorAssembly')
 
-def instructionMemory(clk, pc, instruction, programMemory, staller):
+programMemory = {}
+i = 0
+for line in pa:
+    programMemory[int(i)] = line
+    i += 2
+
+def instructionMemory(clk, pc, instruction):
     """ Stores all instructions and outputs appropriate signals after decoding them
     clk             -- input, clock line
     pc              -- input, instruction memory address
     instruction     -- output, next instruction
-    programMemory   -- input, instruction memory loaded in at startup, PROBABLY SHOULD FIND A BETTER WAY TO DO THIS
     """
 
-    # This basically means this function will run every time there is a
-    # rising clock edge from the clk signal
     @always_comb
     def instructionLogic():
-        opcode = Signal()
-        rd = Signal()
-        rt = Signal()
-        rs = Signal()
-
-        if staller == 3:
-            try:
-                ins_line = programMemory[int(pc)]
-                instruction.next = int(ins_line, 2)
-            except KeyError:
-                pass
-        else:
-            instruction.next = 32768
+        try:
+            ins_line = programMemory[int(pc)]
+            instruction.next = int(ins_line, 2)
+        except KeyError:
+            pass
 
     return instructionLogic
 
-def instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address):
+def instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address, stall):
     """ Stores all instructions and outputs appropriate signals after decoding them
     instruction     -- input, next instruction
     opcode          -- output, instruction[15:12]
@@ -44,6 +41,8 @@ def instructionDecode(instruction, opcode, rs, rt, rd, func, immediate, address)
 
     @always_comb
     def instructionDecodeLogic():
+        opcodeTmp = instruction[16:12]
+
         opcode.next = instruction[16:12]
         rs.next = instruction[12:9]
         rt.next = instruction[9:6]

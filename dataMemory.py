@@ -15,10 +15,18 @@ def dataMemory(clk, address, writeData, readData, memRead, memWrite):
     @always_comb
     def dataMemoryLogic():
         if(memRead == 1):
-            readData.next = memory[address]
+            print "Loading Mem[" + str(address) + "]: " + "{0:#0{1}x}".format(int(writeData), 6)
+            try:
+                readData.next = memory[address]
+            except IndexError:
+                pass
         elif(memWrite == 1):
-            memory[address] = copy(writeData.val)
             print "New Mem[" + str(address) + "]: " + "{0:#0{1}x}".format(int(writeData), 6)
+            print writeData
+            try:
+                memory[address] = copy(writeData.val)
+            except IndexError:
+                pass
 
     return dataMemoryLogic
 
@@ -30,3 +38,18 @@ def printDataMemory():
     print "a0 + 6: " + "{0:#0{1}x}".format(int(memory[a0 + 6]), 6)
     print "a0 + 8: " + "{0:#0{1}x}".format(int(memory[a0 + 8]), 6)
     print
+
+def checkDataMemory():
+    incorrectAddresses = []
+    expectedValues = ["0xff00", "0xff00", "0xff", "0xff", "0xff"]
+
+    for address in range(0, 4):
+        if hex(memory[(address*2) + 16]).rstrip("L") != expectedValues[address]:
+            incorrectAddresses.append(address)
+
+    if len(incorrectAddresses) == 0:
+        print "Memory all good"
+
+    else:
+        for address in incorrectAddresses:
+            print "Address " + str((address*2) + 16) + " had value " + hex(memory[(address*2) + 16]) + " expected " + str(expectedValues[address])
