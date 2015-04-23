@@ -189,10 +189,10 @@ def testbench():
     mux_regDest = mux(ID_EX_rt, ID_EX_rd, ID_EX_RegDst, RegDstOut)
 
     # ALU In1 mux
-    mux3_ALUIn1 = mux3(ID_EX_regData1, EX_MEM_ALUOut, memToRegOut, ALUIn1MuxControl, ALUIn1Out)
+    mux3_ALUIn1 = mux3(ID_EX_regData1, memToRegOut, EX_MEM_ALUOut, ALUIn1MuxControl, ALUIn1Out)
 
     # ALU In2 mux
-    mux3_ALUIn2 = mux3(ID_EX_regData2, EX_MEM_ALUOut, memToRegOut, ALUIn2MuxControl, ALUIn2Out)
+    mux3_ALUIn2 = mux3(ID_EX_regData2, memToRegOut, EX_MEM_ALUOut, ALUIn2MuxControl, ALUIn2Out)
 
     # ALU Src mux
     mux_ALUSrc = mux(ALUIn2Out, ID_EX_immediate, ID_EX_ALUSrc, ALUSrcOut)

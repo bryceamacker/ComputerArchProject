@@ -18,16 +18,16 @@ def forwarding(clk, ID_EX_rs, ID_EX_rt, EX_MEM_registerRd, MEM_WB_registerRd, EX
     @always_comb
     def forwardingLogic():
         if ((EX_MEM_registerRd.val == ID_EX_rs.val) and (EX_MEM_regWrite.val == 1)):
-            ALUIn1MuxControl.next = 1
-        elif ((MEM_WB_registerRd.val == ID_EX_rs.val) and (MEM_WB_regWrite.val == 1)):
             ALUIn1MuxControl.next = 2
+        elif ((MEM_WB_registerRd.val == ID_EX_rs.val) and (MEM_WB_regWrite.val == 1)):
+            ALUIn1MuxControl.next = 1
         else:
             ALUIn1MuxControl.next = 0
 
         if ((EX_MEM_registerRd.val == ID_EX_rt.val) and (EX_MEM_regWrite.val == 1)):
-            ALUIn2MuxControl.next = 1
-        elif ((MEM_WB_registerRd.val == ID_EX_rt.val) and (MEM_WB_regWrite.val == 1)):
             ALUIn2MuxControl.next = 2
+        elif ((MEM_WB_registerRd.val == ID_EX_rt.val) and (MEM_WB_regWrite.val == 1)):
+            ALUIn2MuxControl.next = 1
         else:
             ALUIn2MuxControl.next = 0
 

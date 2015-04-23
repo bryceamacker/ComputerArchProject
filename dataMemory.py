@@ -19,14 +19,14 @@ def dataMemory(clk, address, writeData, readData, memRead, memWrite):
             try:
                 readData.next = memory[address]
             except IndexError:
-                pass
+                print "MEMORY OUT OF RANGE, READ: " + str(address)
         elif(memWrite == 1):
             print "New Mem[" + str(address) + "]: " + "{0:#0{1}x}".format(int(writeData), 6)
             print writeData
             try:
                 memory[address] = copy(writeData.val)
             except IndexError:
-                pass
+                print "MEMORY OUT OF RANGE, WRITE: " + str(address)
 
     return dataMemoryLogic
 

@@ -14,6 +14,7 @@ def IF_ID(clk,  IF_ID_write,    reset, jump,    pcIncrementedIn,    instructionI
     @always(clk.posedge, reset.posedge, jump.posedge)
     def IF_IDLogic():
         if (reset == 1) or (jump == 1):
+            instructionOut.next = 32768
             pass
         elif(IF_ID_write == 1):
             if stallIn.val == 0:
