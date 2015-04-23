@@ -82,7 +82,6 @@ WHILE:
 
     # Mem[$a0] = 0x00FF
     sw $t1, 0($a0)
-    j END
 
   END:
   # $a0 = $a0 + 2

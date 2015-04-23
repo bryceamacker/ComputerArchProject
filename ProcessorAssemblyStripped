@@ -40,7 +40,6 @@ addi $t1, $t1, 0xF                              # 0x004C
 sll $t1, $t1, 4                                 # 0x004E
 addi $t1, $t1, 0xF                              # 0x0050
 sw $t1, 0($a0)                                  # 0x0052 stores 0x00FF
-j END                                           # 0x0054
-END: addi $a0, $a0, 2                           # 0x0056
-j WHILE                                         # 0x0058
-ENDLOOP:                                        # 0x005A
+END: addi $a0, $a0, 2                           # 0x0054
+j WHILE                                         # 0x0056
+ENDLOOP:                                        # 0x0058

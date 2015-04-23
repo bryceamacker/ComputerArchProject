@@ -11,13 +11,10 @@ def IF_ID(clk,  IF_ID_write,    reset, jump,    pcIncrementedIn,    instructionI
     instructionOut -- output, raw instruction
     """
 
-    @always(clk.posedge, reset.posedge)
+    @always(clk.posedge, reset.posedge, jump.posedge)
     def IF_IDLogic():
-        if (reset == 1):
+        if (reset == 1) or (jump == 1):
             pass
-            # IF_ID_write.next = 0
-            # pcIncrementedOut.next = 0
-            # instructionOut.next = 0
         elif(IF_ID_write == 1):
             if stallIn.val == 0:
                 print "################################################"
@@ -78,9 +75,9 @@ def ID_EX(clk,  reset, jump,     instructionIn, pcIncrementedIn,    regData1In, 
     ALUSrcOut -- output, source for ALU in 2
     """
 
-    @always(clk.posedge, reset.posedge)
+    @always(clk.posedge, reset.posedge, jump.posedge)
     def ID_EXLogic():
-        if (reset == 1):
+        if (reset == 1) or (jump == 1):
             instructionOut.next = 0
             pcIncrementedOut.next = 0
             regData1Out.next =0
