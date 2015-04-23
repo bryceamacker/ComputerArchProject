@@ -29,7 +29,7 @@ def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
 def printRegisters():
     print "Register File:"
     for register in registers_mem:
-        print str(registers_dict[bin(register, 3)]) + ": " + "{0:#0{1}x}".format(int(registers_mem[register], 2), 6) #hex(int(registers_mem[register], 2))
+        print str(registers_dict[bin(register, 3)]) + ": " + "{0:#0{1}X}".format(int(registers_mem[register], 2), 6) #hex(int(registers_mem[register], 2))
     print
 
 def checkRegisters():

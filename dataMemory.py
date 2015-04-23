@@ -32,11 +32,11 @@ def dataMemory(clk, address, writeData, readData, memRead, memWrite):
 
 def printDataMemory():
     print "Data Memory:"
-    print "    a0: " + "{0:#0{1}x}".format(int(memory[a0]), 6)
-    print "a0 + 2: " + "{0:#0{1}x}".format(int(memory[a0 + 2]), 6)
-    print "a0 + 4: " + "{0:#0{1}x}".format(int(memory[a0 + 4]), 6)
-    print "a0 + 6: " + "{0:#0{1}x}".format(int(memory[a0 + 6]), 6)
-    print "a0 + 8: " + "{0:#0{1}x}".format(int(memory[a0 + 8]), 6)
+    print "    a0: " + "{0:#0{1}X}".format(int(memory[a0]), 6)
+    print "a0 + 2: " + "{0:#0{1}X}".format(int(memory[a0 + 2]), 6)
+    print "a0 + 4: " + "{0:#0{1}X}".format(int(memory[a0 + 4]), 6)
+    print "a0 + 6: " + "{0:#0{1}X}".format(int(memory[a0 + 6]), 6)
+    print "a0 + 8: " + "{0:#0{1}X}".format(int(memory[a0 + 8]), 6)
     print
 
 def checkDataMemory():
@@ -52,4 +52,4 @@ def checkDataMemory():
 
     else:
         for address in incorrectAddresses:
-            print "Address " + str((address*2) + 16) + " had value " + hex(memory[(address*2) + 16]) + " expected " + str(expectedValues[address])
+            print "Address " + str((address*2) + 16) + " had value " + hex(memory[(address*2) + 16]).rstrip("L") + " expected " + str(expectedValues[address])

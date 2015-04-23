@@ -118,6 +118,16 @@ def compile(fileName):
     line = parseLine(line, lineNum)
     machineCode.append(line)
 
+  strippedFile = open('ProcessorAssemblyStripped', 'w')
+
+  numWhiteSpace = 30
+
+  for lineNum, line in enumerate(codeWithoutLabels):
+      lineLength = len(line.strip())
+
+      lineString = line.strip() + "# ".rjust(30 - lineLength) +  "{0:#0{1}X}".format(int(lineNum * 2), 4) + "\n"
+      strippedFile.write(lineString)
+
   return machineCode
 
 def parseLine(line, lineNum):
