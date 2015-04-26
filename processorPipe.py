@@ -254,19 +254,40 @@ if __name__ == '__main__':
     [ os.remove (f) for f in os.listdir(".") if f.endswith(".vcd") ]
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
-    sim.run((113)*3)
 
-    # while True:
-    #     print
-    #     clocks = input("Enter how many clock cycles to run, or 0 for entire program: ")
-    #     if clocks == 0:
-    #         sim.run((113)*3)
-    #     else:
-    #         sim.run(clocks)
-    #
-    #     printRegisters()
-    #     printDataMemory()
+    clocks = 0
+    neededClocks = 112*3
+
+    printRegisters()
+    printDataMemory()
+
+    while True:
+        print
+        userInput = raw_input("Enter how many clock cycles to run, or 0 for entire program, or t for tap mode, or q to quit and print out register/memory contents: ")
+
+        if userInput == "0":
+            sim.run(neededClocks)
+            checkRegisters()
+            checkDataMemory()
+        elif userInput == "t":
+            print "Press enter to run one clock cycle and q to quit"
+            while userInput != "q" and clocks < neededClocks:
+                userInput = raw_input()
+                sim.run(2)
+                clocks += 2
+                printRegisters()
+                printDataMemory()
+                print "Enter q to quit"
+        elif userInput == "q":
+            break
+        else:
+            try:
+                sim.run(int(userInput)*2)
+                printRegisters()
+                printDataMemory()
+            except ValueError:
+                print "Invalid choice"
+
     print
-
     checkRegisters()
     checkDataMemory()
