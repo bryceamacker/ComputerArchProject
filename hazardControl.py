@@ -9,6 +9,7 @@ def hazardControl(clk, IF_ID_rs, IF_ID_rt, ID_EX_rt, ID_EX_MemRead, pcWrite, IF_
             pcWrite.next = 0
             IF_ID_write.next = 0
             controlEnable.next = 0
+            print "Inserting Bubble"
         else:
             pcWrite.next = 1
             IF_ID_write.next = 1

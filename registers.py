@@ -13,8 +13,6 @@ def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
     data2       -- output
     """
 
-    # This basically means this function will run every time there is a
-    # rising clock edge from the clk signal
     @always_comb
     def registersLogic():
         data1.next = int(registers_mem[int(read1)], 2)
@@ -22,7 +20,10 @@ def registers(clk, read1, read2, writeReg, writeData, writeSig, data1, data2):
 
         if writeSig:
             registers_mem[int(writeReg.val)] = bin(writeData, 16)
+
+            print "**************** Register Update ****************"
             print "New " + str(registers_dict[bin(writeReg, 3)]) + ": " +"{0:#0{1}x}".format(int(writeData), 6)
+            print
 
     return registersLogic
 
@@ -33,16 +34,17 @@ def printRegisters():
     print
 
 def checkRegisters():
-    incorrectRegisters = []
     expectedValues = ["0x1a", "0x0", "0x1", "0x1019", "0x0", "0x0", "0x3c0", "0x3fc"]
 
-    for regNum in range(0, 7):
+    print "....................Final Registers...................."
+    print "Reg" + "  " + "Actual" + " " * 15 + "Expected" + " " * 15 + "Result"
+
+    for regNum, register in enumerate(registers_mem):
         if hex(int(registers_mem[regNum], 2)) != expectedValues[regNum]:
-            incorrectRegisters.append(regNum)
+            regResult = "X"
+        else:
+            regResult = u'\u2713'
 
-    if len(incorrectRegisters) == 0:
-        print "Registers all good"
+        print str(registers_dict[bin(register, 3)]) + ":  " + "{0:#0{1}x}".format(int(registers_mem[register], 2), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[regNum], 16), 6) + " " * 17 + regResult
 
-    else:
-        for register in incorrectRegisters:
-            print "Register " + registers_dict[bin(register, 3)] + " had value " + hex(int(registers_mem[register], 2)) + " expected " + expectedValues[register]
+    print

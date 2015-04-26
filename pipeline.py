@@ -1,6 +1,8 @@
 from myhdl import *
 from memoryDictionaries import *
 
+printDebug = {}
+
 def IF_ID(clk,  IF_ID_write,    reset, jump,    pcIncrementedIn,    instructionIn,  stallIn,
                                                 pcIncrementedOut,   instructionOut, stallOut):
     """
@@ -18,33 +20,22 @@ def IF_ID(clk,  IF_ID_write,    reset, jump,    pcIncrementedIn,    instructionI
             pass
         elif(IF_ID_write == 1):
             if stallIn.val == 0:
-                print "################################################"
-                print
-                print
-                print "################################################"
-
                 pcIncrementedOut.next = pcIncrementedIn
                 instructionOut.next = instructionIn
                 stallOut.next = stallIn
                 IF_ID_write.next = 1
 
-                opcode = instructionIn[:12]
-                if opcode == r_type:
-                    func = bin(instructionIn[3:0], 3)
-                    rd = bin(instructionIn[6:3], 3)
-                    rt = bin(instructionIn[9:6], 3)
-                    rs = bin(instructionIn[12:9], 3)
-                    print("%s %s %s %s" % (func_dict[func], registers_dict[rd], registers_dict[rs], registers_dict[rt]))
+        printString = ""
 
-                elif opcode == jump:
-                    address = bin(instructionIn[12:], 12)
-                    print("%s %s" % (opcode_dict[bin(opcode, 4)], address))
+        printString += "----------------------- IF/ID -----------------------\n\n"
+        printString += generateInstructionString(instructionIn) + "\n"
+        printString += "Instruction: " + hex(instructionIn).strip("L")
+        printString += " | PC Incremented: " + hex(pcIncrementedIn).strip("L")
+        printString += " | Stall: " + str(stallIn)
+        printString += " | IF_ID write: " + str(IF_ID_write)
 
-                else:
-                    imm = bin(instructionIn[6:], 6)
-                    rt = bin(instructionIn[9:6], 3)
-                    rs = bin(instructionIn[12:9], 3)
-                    print("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rt], registers_dict[rs], imm))
+        printDebug["IF_ID"] = printString
+
 
     return IF_IDLogic
 
@@ -79,7 +70,7 @@ def ID_EX(clk,  reset, jump,     instructionIn, pcIncrementedIn,    regData1In, 
     @always(clk.posedge, reset.posedge, jump.posedge)
     def ID_EXLogic():
         if (reset == 1) or (jump == 1):
-            instructionOut.next = 0
+            instructionOut.next = 32768
             pcIncrementedOut.next = 0
             regData1Out.next =0
             regData2Out.next = 0
@@ -119,6 +110,34 @@ def ID_EX(clk,  reset, jump,     instructionIn, pcIncrementedIn,    regData1In, 
             JumpAddressOut.next = JumpAddressIn
             stallOut.next = stallIn
 
+        printString = ""
+
+        printString += "----------------------- ID/EX -----------------------\n\n"
+        printString += generateInstructionString(instructionIn) + "\n"
+        printString += "Instruction: " + hex(instructionIn).strip("L")
+        printString += " | PC Incremented: " + hex(pcIncrementedIn).strip("L")
+        printString += " | Register 1: " + hex(regData1In).strip("L")
+        printString += " | Register 2: " + hex(regData2In).strip("L")
+        printString += " | RS: " + hex(rsIn).strip("L")
+        printString += " | RT: " + hex(rtIn).strip("L")
+        printString += " | RD: " + hex(rdIn).strip("L")
+        printString += " | immediate: " + hex(immediateIn).strip("L")
+        printString += " | Stall: " + str(stallIn) + "\n"
+
+        printString += "Reg write: " + str(RegWriteIn)
+        printString += " | Branch: " + str(BranchIn)
+        printString += " | Reg Dst: " + str(RegDstIn)
+        printString += " | ALU Op: " + str(ALUOpIn)
+        printString += " | ALU Src: " + str(ALUSrcIn)
+        printString += " | Mem to Reg: " + str(MemToRegIn)
+        printString += " | Mem Read: " + str(MemReadIn)
+        printString += " | Mem Write: " + str(MemWriteIn)
+        printString += " | Jump: " + str(JumpIn)
+        printString += " | Jump Address: " + hex(JumpAddressIn).strip("L")
+
+        printDebug["ID_EX"] = printString
+
+
     return ID_EXLogic
 
 def EX_MEM(clk, reset,  instructionIn, pcIncrementedImmediateIn,   zeroIn,     ALUResultIn,    regData2In,     regDstOutIn,    RegWriteIn,     BranchIn,   MemReadIn,  MemWriteIn,     MemToRegIn,     JumpIn,     JumpAddrIn,     stallIn,
@@ -148,7 +167,7 @@ def EX_MEM(clk, reset,  instructionIn, pcIncrementedImmediateIn,   zeroIn,     A
     @always(clk.posedge, reset.posedge)
     def EX_MEMLogic():
         if (reset == 1):
-            instructionOut.next = 0
+            instructionOut.next = 32768
             pcIncrementedImmediateOut.next = 0
             zeroOut.next = 0
             ALUResultOut.next = 0
@@ -169,6 +188,7 @@ def EX_MEM(clk, reset,  instructionIn, pcIncrementedImmediateIn,   zeroIn,     A
             ALUResultOut.next = ALUResultIn
             regData2Out.next = regData2In
             regDstOutOut.next = regDstOutIn
+
             RegWriteOut.next = RegWriteIn
             BranchOut.next = BranchIn
             MemReadOut.next = MemReadIn
@@ -177,6 +197,27 @@ def EX_MEM(clk, reset,  instructionIn, pcIncrementedImmediateIn,   zeroIn,     A
             JumpOut.next = JumpIn
             JumpAddrOut.next = JumpAddrIn
             stallOut.next = stallIn
+
+        printString = ""
+
+        printString += "----------------------- EX/MEM ----------------------\n\n"
+        printString += generateInstructionString(instructionIn) + "\n"
+        printString += "Instruction: " + hex(instructionIn).strip("L")
+        printString += " | PC Incremented Immediate: " + hex(pcIncrementedImmediateIn).strip("L")
+        printString += " | Zero: " + str(zeroIn)
+        printString += " | ALU Out: " + hex(ALUResultOut).strip("L")
+        printString += " | Reg Data 2: " + hex(regData2Out).strip("L")
+        printString += " | Reg Dst Out: " + hex(regDstOutIn).strip("L") + "\n"
+
+        printString += "Reg write: " + str(RegWriteIn)
+        printString += " | Branch: " + str(BranchIn)
+        printString += " | Mem Read: " + str(MemReadIn)
+        printString += " | Mem Write: " + str(MemWriteIn)
+        printString += " | Mem to Reg: " + str(MemToRegIn)
+        printString += " | Jump: " + str(JumpIn)
+        printString += " | Jump Address: " + hex(JumpAddrIn).strip("L")
+
+        printDebug["EX_MEM"] = printString
 
     return EX_MEMLogic
 
@@ -199,7 +240,7 @@ def MEM_WB(clk, reset,  instructionIn, dataMemoryReadDataIn,   ALUResultIn,    r
     @always(clk.posedge, reset.posedge)
     def MEM_WBLogic():
         if (reset == 1):
-            instructionOut.next = 0
+            instructionOut.next = 32768
             dataMemoryReadDataOut.next = 0
             ALUResultOut.next = 0
             regDstOutOut.next = 0
@@ -216,4 +257,40 @@ def MEM_WB(clk, reset,  instructionIn, dataMemoryReadDataIn,   ALUResultIn,    r
             stallOut.next = stallIn
             stall.next = 0
 
+        printString = ""
+
+        printString += "----------------------- MEM/WB -----------------------\n\n"
+        printString += generateInstructionString(instructionIn) + "\n"
+        printString += "Instruction: " + hex(instructionIn).strip("L")
+        printString += " | Data Mem Read: " + hex(dataMemoryReadDataIn).strip("L")
+        printString += " | ALU Out: " + hex(ALUResultIn).strip("L")
+        printString += " | Reg Dst Out: " + hex(regDstOutIn).strip("L") + "\n"
+
+        printString += "Reg Write: " + str(RegWriteIn)
+        printString += " | Mem to Reg: " + str(MemToRegIn)
+
+        printDebug["MEM_WB"] = printString
+
     return MEM_WBLogic
+
+def generateInstructionString(instruction):
+    instructionString = ""
+    opcode = instruction[:12]
+    if opcode == r_type:
+        func = bin(instruction[3:0], 3)
+        rd = bin(instruction[6:3], 3)
+        rt = bin(instruction[9:6], 3)
+        rs = bin(instruction[12:9], 3)
+        instructionString = ("%s %s %s %s" % (func_dict[func], registers_dict[rd], registers_dict[rs], registers_dict[rt]))
+
+    elif opcode == jump:
+        address = bin(instruction[12:], 12)
+        instructionString = ("%s %s" % (opcode_dict[bin(opcode, 4)], address))
+
+    else:
+        imm = bin(instruction[6:], 6)
+        rt = bin(instruction[9:6], 3)
+        rs = bin(instruction[12:9], 3)
+        instructionString = ("%s %s %s %s" % (opcode_dict[bin(opcode, 4)], registers_dict[rt], registers_dict[rs], imm))
+
+    return instructionString

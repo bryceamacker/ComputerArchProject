@@ -14,23 +14,45 @@ from alu import *
 from dataMemory import *
 
 init_instruction = programMemory[0]
-
+clockCount = 0
 def ClkDriver(clk):
+    global clockCount
     halfPeriod = delay(1)
 
     @always(halfPeriod)
     def driveClk():
+        global clockCount, printDebug
+
         clk.next = not clk
 
+        if clk.val == 0:
+            clockCount += 1
+            print
+            print "====================================================== Clock " + str(clockCount) + " ======================================================"
+            print
+
+            try:
+                print printDebug["IF_ID"]
+                print
+            except KeyError:
+                pass
+            try:
+                print printDebug["ID_EX"]
+                print
+            except KeyError:
+                pass
+            try:
+                print printDebug["EX_MEM"]
+                print
+            except KeyError:
+                pass
+            try:
+                print printDebug["MEM_WB"]
+                print
+            except KeyError:
+                pass
+
     return driveClk
-
-def spaceOutput(clk):
-
-    @always(clk.negedge)
-    def spaceOutputLogic():
-        # print("")
-        pass
-    return spaceOutputLogic
 
 def testbench():
     clk = Signal(bool(0))
@@ -143,7 +165,6 @@ def testbench():
     # Creates an instruction signal 16 bits wide, init to 0xFFFF
     instruction = Signal(intbv(32768)[16:])
 
-
     ###################################### FORWARDING/HAZARD UNIT #####################################
     fu_forwardingUnit = forwarding(clk, ID_EX_rs, ID_EX_rt, EX_MEM_RegDstOut, MEM_WB_RegDstOut, EX_MEM_RegWrite, MEM_WB_RegWrite, ID_EX_ALUSrc, ALUIn1MuxControl, ALUIn2MuxControl)
     hu_hazardControlUnit = hazardControl(clk, rs, rt, ID_EX_rt, ID_EX_MemRead, pcWrite, IF_ID_write, controlEnable)
@@ -233,19 +254,19 @@ if __name__ == '__main__':
     [ os.remove (f) for f in os.listdir(".") if f.endswith(".vcd") ]
     tb_fsm = traceSignals(testbench)
     sim = Simulation(tb_fsm)
-    sim.run((133)*3)
+    sim.run((113)*3)
 
     # while True:
     #     print
     #     clocks = input("Enter how many clock cycles to run, or 0 for entire program: ")
     #     if clocks == 0:
-    #         sim.run((133*4)*2)
+    #         sim.run((113)*3)
     #     else:
     #         sim.run(clocks)
     #
     #     printRegisters()
     #     printDataMemory()
-    printRegisters()
-    printDataMemory()
+    print
+
     checkRegisters()
     checkDataMemory()
