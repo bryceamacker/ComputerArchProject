@@ -15,9 +15,8 @@
 # Binaries
 *.pyc
 
+# Various strange files
 *.vcd
-testbench.vcd.1427310929.54
-testbench.vcd*
 *.name
 *.iml
 .idea/encodings.xml
@@ -27,4 +26,7 @@ testbench.vcd*
 .idea/vcs.xml
 .idea/workspace.xml
 gtkwave - Shortcut.lnk
+
+# Compiler outputs
 ProcessorAssemblyStripped
+ProcessorMachineCode
