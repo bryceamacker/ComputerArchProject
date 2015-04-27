@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import os
+import sys
+
+sys.path.insert(1,'./components')
 
 from myhdl import *
 from combinatorialComponents import *
