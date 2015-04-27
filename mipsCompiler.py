@@ -102,6 +102,7 @@ registerDictionary = {
   "$v3":  "111"
 }
 
+# Holders for labels and the code stripped of them
 labels = {}
 codeWithoutLabels = []
 
@@ -111,28 +112,38 @@ def compile(fileName):
   machineCode = []
   codeLines = []
 
+  # Get the code with out comments and split up the labels and code
   codeLines = stripComments(fileName)
   labels, codeWithoutLabels = getLabels(codeLines)
 
+  # Parse each line
   for lineNum, line in enumerate(codeWithoutLabels):
     line = parseLine(line, lineNum)
     machineCode.append(line)
 
+  # Create a 'stripped' assembly file for debug purposes
   strippedFile = open('ProcessorAssemblyStripped', 'w')
-
   numWhiteSpace = 30
-
   for lineNum, line in enumerate(codeWithoutLabels):
       lineLength = len(line.strip())
 
       lineString = line.strip() + "# ".rjust(30 - lineLength) +  "{0:#0{1}X}".format(int(lineNum * 2), 4) + "\n"
       strippedFile.write(lineString)
 
+  strippedFile.close()
+
+  machineCodeFile = open('ProcessorMachineCode', 'w')
+  for lineNum, line in enumerate(machineCode):
+      machineCodeFile.write(line + "\n")
+
+  machineCodeFile.close()
+
   return machineCode
 
 def parseLine(line, lineNum):
-  pieces = line.split()
+  # Parse the line based on its opcode
 
+  pieces = line.split()
   opcode = pieces[0]
 
   if opcode in rTypes:
@@ -143,8 +154,9 @@ def parseLine(line, lineNum):
     return parseJTypeLine(line, lineNum)
 
 def parseRTypeLine(line):
-  pieces = line.split()
+  # R-Type lines
 
+  pieces = line.split()
   opcode = pieces[0]
   rd = pieces[1].replace(',', '')
   rs = pieces[2].replace(',', '')
@@ -154,10 +166,12 @@ def parseRTypeLine(line):
   return binary
 
 def parseITypeLine(line, lineNum):
-  pieces = line.split()
+  # I-Type lines
 
+  pieces = line.split()
   opcode = pieces[0]
   rt = pieces[1].replace(',', '')
+
   if opcode == "lw" or opcode == "sw":
     rsImmediate = pieces[2]
     secondaryPieces = rsImmediate.split("(")
@@ -172,8 +186,9 @@ def parseITypeLine(line, lineNum):
   return binary
 
 def parseJTypeLine(line, lineNum):
-  pieces = line.split()
+  # J-Type lines
 
+  pieces = line.split()
   opcode = pieces[0]
   address = pieces[1]
 
@@ -181,6 +196,8 @@ def parseJTypeLine(line, lineNum):
   return binary
 
 def getLabels(codeLines):
+  # Get the labels from a program
+
   numOfLabels = 0
   labels = {}
   codeWithoutLabels = []
@@ -195,6 +212,8 @@ def getLabels(codeLines):
   return labels, codeWithoutLabels
 
 def expandImmediate(value, numBits, lineNum, relative):
+  # Expand immediate values with different bases to different sizes
+
   if value in labels:
     base = 10
     if relative == 1:
@@ -214,6 +233,8 @@ def expandImmediate(value, numBits, lineNum, relative):
   return binary
 
 def printCode(code):
+  # Print each line of code for debugging purposes
+
   for lineNum, line in enumerate(code):
     print line[0:4],
     print ' ',
@@ -228,6 +249,8 @@ def printCode(code):
     print
 
 def stripComments(fileName):
+  # Strip all the comments in a file, uses '#' for comments
+
   codeLines = []
 
   with open(fileName) as f:
@@ -235,7 +258,6 @@ def stripComments(fileName):
           if line != "\n" and not (line.lstrip().startswith("#")):
               codeLines.append(line)
   return codeLines
-
 
 if __name__ == '__main__':
   machineCode = compile("ProcessorAssembly")

@@ -21,6 +21,7 @@ def alu(clk, ALUOp, ALUIn1, ALUIn2, ALUOut, zero):
 
     @always_comb
     def aluLogic():
+        # Perform the operation
         if ALUOp == ALUAddOp:
             ALUOutVal = ALUIn1 + ALUIn2
         elif ALUOp == ALUSubOp:
@@ -48,13 +49,11 @@ def alu(clk, ALUOp, ALUIn1, ALUIn2, ALUOut, zero):
         else:
             zero.next = 0
 
-
-        #### This shouldn't be here
+        # Range check
         if ALUOutVal >= 65536:
             ALUOutVal = 65535
         elif ALUOutVal < 0:
             ALUOutVal = 1
-        #### This shouldn't be here
 
         temp = intbv(ALUOutVal)
         ALUOut.next = temp.signed()

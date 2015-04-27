@@ -7,10 +7,12 @@ def IF_ID(clk,  IF_ID_write,    reset, jump,    pcIncrementedIn,    instructionI
                                                 pcIncrementedOut,   instructionOut, stallOut):
     """
     clk -- input, clock line
+    reset -- input, whether or not to clear the pipeline
     pcIncrementedIn -- input, pc after increment
     instructionIn -- input, raw instruction
     pcIncrementedOut -- output, pc after increment
     instructionOut -- output, raw instruction
+    stall -- output, whether or not there is a stall
     """
 
     @always(clk.posedge, reset.posedge, jump.posedge)
@@ -39,10 +41,11 @@ def IF_ID(clk,  IF_ID_write,    reset, jump,    pcIncrementedIn,    instructionI
 
     return IF_IDLogic
 
-def ID_EX(clk,  reset, jump,     instructionIn, pcIncrementedIn,    regData1In,     regData2In,     rsIn,   rtIn,   rdIn,   immediateIn,    RegWriteIn,     BranchIn,   RegDstIn,   ALUOpIn,    ALUSrcIn,   MemToRegIn,     MemReadIn,  MemWriteIn,     JumpIn,     JumpAddressIn,  stallIn,
-                            instructionOut, pcIncrementedOut,   regData1Out,    regData2Out,    rsOut,  rtOut,  rdOut,  immediateOut,   RegWriteOut,    BranchOut,  RegDstOut,  ALUOpOut,   ALUSrcOut,  MemToRegOut,    MemReadOut, MemWriteOut,    JumpOut,    JumpAddressOut, stallOut):
+def ID_EX(clk,  reset, jump,    instructionIn,  pcIncrementedIn,    regData1In,     regData2In,     rsIn,   rtIn,   rdIn,   immediateIn,    RegWriteIn,     BranchIn,   RegDstIn,   ALUOpIn,    ALUSrcIn,   MemToRegIn,     MemReadIn,  MemWriteIn,     JumpIn,     JumpAddressIn,  stallIn,
+                                instructionOut, pcIncrementedOut,   regData1Out,    regData2Out,    rsOut,  rtOut,  rdOut,  immediateOut,   RegWriteOut,    BranchOut,  RegDstOut,  ALUOpOut,   ALUSrcOut,  MemToRegOut,    MemReadOut, MemWriteOut,    JumpOut,    JumpAddressOut, stallOut):
     """
     clk -- input, clock line
+    reset -- input, whether or not to clear the pipeline
     pcIncrementedIn -- input, pc after increment
     regData1In -- input, data from reg1
     regData2In -- input, data from reg2
@@ -65,6 +68,7 @@ def ID_EX(clk,  reset, jump,     instructionIn, pcIncrementedIn,    regData1In, 
     RegDstOut -- output, control line
     ALUOpOut -- output, operation for ALU
     ALUSrcOut -- output, source for ALU in 2
+    stall -- output, whether or not there is a stall
     """
 
     @always(clk.posedge, reset.posedge, jump.posedge)
@@ -144,6 +148,7 @@ def EX_MEM(clk, reset,  instructionIn, pcIncrementedImmediateIn,   zeroIn,     A
                         instructionOut, pcIncrementedImmediateOut,  zeroOut,    ALUResultOut,   regData2Out,    regDstOutOut,   RegWriteOut,    BranchOut,  MemReadOut, MemWriteOut,    MemToRegOut,    JumpOut,    JumpAddrOut,    stallOut):
     """
     clk -- input, clock input
+    reset -- input, whether or not to clear the pipeline
     pcIncrementedIn -- input, pc incremented and added with immediate
     zeroIn -- input, zero line from ALU
     ALUResultIn -- input, result from ALU
@@ -162,6 +167,7 @@ def EX_MEM(clk, reset,  instructionIn, pcIncrementedImmediateIn,   zeroIn,     A
     BranchOut -- output, control line
     MemReadOut -- output, control line
     MemWriteOut -- output, control line
+    stall -- output, whether or not there is a stall
     """
 
     @always(clk.posedge, reset.posedge)
@@ -225,6 +231,7 @@ def MEM_WB(clk, reset,  instructionIn, dataMemoryReadDataIn,   ALUResultIn,    r
                         instructionOut, dataMemoryReadDataOut,  ALUResultOut,   regDstOutOut,   RegWriteOut,    MemToRegOut,    stallOut, stall):
     """
     clk -- input, clock input
+    reset -- input, whether or not to clear the pipeline
     dataMemoryReadDataIn -- input, data from memory read
     ALUResultIn -- input, result from ALU
     regDstOutIn -- input, control line
@@ -235,6 +242,7 @@ def MEM_WB(clk, reset,  instructionIn, dataMemoryReadDataIn,   ALUResultIn,    r
     regDstOutOut -- output, control line
     RegWriteOut -- output, control line
     MemtoRegOut -- output, control line
+    stall -- output, whether or not there is a stall
     """
 
     @always(clk.posedge, reset.posedge)
@@ -274,6 +282,8 @@ def MEM_WB(clk, reset,  instructionIn, dataMemoryReadDataIn,   ALUResultIn,    r
     return MEM_WBLogic
 
 def generateInstructionString(instruction):
+    # Takes a hex instruction and generates the appropriate assembly representation
+
     instructionString = ""
     opcode = instruction[:12]
     if opcode == r_type:

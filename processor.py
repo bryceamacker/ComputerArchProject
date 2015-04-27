@@ -306,12 +306,15 @@ if __name__ == '__main__':
             break
 
         else:
-            try:
-                sim.run(int(userInput)*2)
-                printRegisters()
-                printDataMemory()
-            except ValueError:
-                print "Invalid choice"
+            if userInput == "0":
+                print "Cannot run 0 clock cycles"
+            else:
+                try:
+                    sim.run(int(userInput)*2)
+                    printRegisters()
+                    printDataMemory()
+                except ValueError:
+                    print "Invalid choice"
 
     print
     checkRegisters()

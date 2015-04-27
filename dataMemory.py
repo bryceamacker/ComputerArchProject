@@ -40,19 +40,19 @@ def checkDataMemory():
     print "........................Final Memory......................."
     print "Address" + "  " + "Actual" + " " * 15 + "Expected" + " " * 15 + "Result"
 
-    memResult = u'\u2713' if hex(int(memory[a0])) == expectedValues[0] else "X"
+    memResult = "Pass" if hex(int(memory[a0])) == expectedValues[0] else "Fail"
     print "    a0:  " + "{0:#0{1}x}".format(int(memory[a0]), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[0], 16), 6) + " " * 17 + memResult
 
-    memResult = u'\u2713' if hex(int(memory[a0 + 2])) == expectedValues[1] else "X"
+    memResult = "Pass" if hex(int(memory[a0 + 2])) == expectedValues[1] else "Fail"
     print "a0 + 2:  " + "{0:#0{1}x}".format(int(memory[a0 + 2]), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[1], 16), 6) + " " * 17 + memResult
 
-    memResult = u'\u2713' if hex(int(memory[a0 + 4])) == expectedValues[2] else "X"
+    memResult = "Pass" if hex(int(memory[a0 + 4])) == expectedValues[2] else "Fail"
     print "a0 + 4:  " + "{0:#0{1}x}".format(int(memory[a0 + 4]), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[2], 16), 6) + " " * 17 + memResult
 
-    memResult = u'\u2713' if hex(int(memory[a0 + 6])) == expectedValues[3] else "X"
+    memResult = "Pass" if hex(int(memory[a0 + 6])) == expectedValues[3] else "Fail"
     print "a0 + 6:  " + "{0:#0{1}x}".format(int(memory[a0 + 6]), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[3], 16), 6) + " " * 17 + memResult
 
-    memResult = u'\u2713' if hex(int(memory[a0 + 8])) == expectedValues[4] else "X"
+    memResult = "Pass" if hex(int(memory[a0 + 8])) == expectedValues[4] else "Fail"
     print "a0 + 8:  " + "{0:#0{1}x}".format(int(memory[a0 + 8]), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[4], 16), 6) + " " * 17 + memResult
 
     print

@@ -41,9 +41,9 @@ def checkRegisters():
 
     for regNum, register in enumerate(registers_mem):
         if hex(int(registers_mem[regNum], 2)) != expectedValues[regNum]:
-            regResult = "X"
+            regResult = "Fail"
         else:
-            regResult = u'\u2713'
+            regResult = "Pass"
 
         print str(registers_dict[bin(register, 3)]) + ":  " + "{0:#0{1}x}".format(int(registers_mem[register], 2), 6) + " " * 15 + "{0:#0{1}x}".format(int(expectedValues[regNum], 16), 6) + " " * 17 + regResult
 

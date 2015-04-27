@@ -9,8 +9,6 @@ def programCounter(clk, pcIn, pc, pcWrite, stall, reset):
     staller     -- input, staller signal
     """
 
-    # This basically means this function will run everytime there is a
-    # rising clock edge from the clk signal
     @always(clk.posedge)
     def incLogic():
         if (stall.val == 0) and (pcWrite == 1):

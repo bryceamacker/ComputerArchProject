@@ -1,5 +1,6 @@
 from myhdl import *
 
+# Two input muxes
 def mux(in1, in2, control, out):
     """
     in1         -- input, input 0
@@ -17,6 +18,7 @@ def mux(in1, in2, control, out):
 
     return muxLogic
 
+# Three input muxes
 def mux3(in1, in2, in3, control, out):
     """
     in1         -- input, input 0
@@ -37,6 +39,7 @@ def mux3(in1, in2, in3, control, out):
 
     return muxLogic
 
+# Two input adder
 def adder(in1, in2, out):
     """
     in1 -- input, input 1
@@ -50,6 +53,7 @@ def adder(in1, in2, out):
 
     return adderLogic
 
+# Two input and
 def andGate(in1, in2, out):
     """
     in1 -- input, input 1
@@ -62,28 +66,3 @@ def andGate(in1, in2, out):
         out.next = in1 & in2
 
     return andGateLogic
-
-def shiftLeft(in1, shamt, out):
-    """
-    in1     -- input, input
-    shamt   -- input, shift amount
-    out     -- output, output
-    """
-
-    @always_comb
-    def shiftLeftLogic():
-        out.next = in1 << shamt
-
-    return shiftLeftLogic
-
-def signExtend(clk, in1, out):
-    """
-    in1 -- input, input
-    out -- output, output
-    """
-
-    @always(clk.posedge)
-    def signExtendLogic():
-        out.next = in1
-
-    return signExtendLogic

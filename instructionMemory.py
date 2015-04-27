@@ -2,8 +2,8 @@ from myhdl import *
 from memoryDictionaries import *
 from mipsCompiler import *
 
+# Compile our program
 pa = compile('ProcessorAssembly')
-
 programMemory = {}
 i = 0
 for line in pa:

@@ -1,4 +1,4 @@
-# OPCODES
+# Opcodes
 r_type = 0
 addi = 1
 subi = 2
@@ -11,7 +11,7 @@ srl = 9
 jump = 10
 beq = 11
 
-# FUNC
+# Funcs
 add = 0
 sub = 1
 logical_and = 2
@@ -19,6 +19,7 @@ logical_or = 3
 xor = 4
 slt = 5
 
+# Initialize memory with proper values
 memory=[i for i in range(26)]
 a0 = 16
 memory[a0] =     int("0101", 16)
@@ -35,7 +36,7 @@ func_dict = {'000': 'add',
          '100': 'xor',
          '101': 'slt'}
 
-# REGISTERS
+# Register file
 registers_dict = {'000': 'a0',
                  '001': 'a1',
                  '010': 'v0',
@@ -54,7 +55,7 @@ registers_mem = { 0: '0000000000000000',
                   6: '0000000000000000',
                   7: '0000000000000000'}
 
-# OPCODES
+# Opcodes
 opcode_dict = {'0000': 'r_type',
                '0001': 'addi',
                '0010': 'subi',
