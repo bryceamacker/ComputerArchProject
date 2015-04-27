@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Simple file of pseudo-code to run the required program
 
 v0 = v1 = v2 = v3 = t0 = t1 = a0 = a1 = 0
