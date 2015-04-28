@@ -302,11 +302,17 @@ if __name__ == '__main__':
                     sim.run(24*2)
                 else:
                     sim.run(20*2)
+
+
                 sim.run(7*2)
 
                 loopCount += 1
                 printRegisters()
                 printDataMemory()
+
+            print "Hit enter to finish the rest of the program"
+            userInput = raw_input()
+
             sim.run(9*2)
             break
 
