@@ -1,3 +1,5 @@
+# Instruction set info
+
 ################ R-Type Format ################
 # Instruction Format:
 # [opcode]     [rs]    [rt]   [rd]   [func]
