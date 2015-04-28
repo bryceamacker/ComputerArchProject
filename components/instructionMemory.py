@@ -3,7 +3,7 @@ from memoryDictionaries import *
 from mipsCompiler import *
 
 # Compile our program
-pa = compile('ProcessorAssembly')
+pa = compile('ProcessorAssembly.txt')
 programMemory = {}
 i = 0
 for line in pa:

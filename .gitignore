@@ -28,5 +28,5 @@
 gtkwave - Shortcut.lnk
 
 # Compiler outputs
-ProcessorAssemblyStripped
-ProcessorMachineCode
+ProcessorAssemblyStripped.txt
+ProcessorMachineCode.txt

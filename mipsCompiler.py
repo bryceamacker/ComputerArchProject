@@ -122,7 +122,7 @@ def compile(fileName):
     machineCode.append(line)
 
   # Create a 'stripped' assembly file for debug purposes
-  strippedFile = open('ProcessorAssemblyStripped', 'w')
+  strippedFile = open('ProcessorAssemblyStripped.txt', 'w')
   numWhiteSpace = 30
   for lineNum, line in enumerate(codeWithoutLabels):
       lineLength = len(line.strip())
@@ -132,7 +132,7 @@ def compile(fileName):
 
   strippedFile.close()
 
-  machineCodeFile = open('ProcessorMachineCode', 'w')
+  machineCodeFile = open('ProcessorMachineCode.txt', 'w')
   for lineNum, line in enumerate(machineCode):
       machineCodeFile.write(line + "\n")
 
@@ -260,5 +260,5 @@ def stripComments(fileName):
   return codeLines
 
 if __name__ == '__main__':
-  machineCode = compile("ProcessorAssembly")
+  machineCode = compile("ProcessorAssembly.txt")
   printCode(machineCode)
